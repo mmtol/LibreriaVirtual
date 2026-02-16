@@ -13,6 +13,9 @@ namespace LibreriaVirtual.Models
         [Column("Nombre")]
         public string Nombre { get; set; }
 
+        [Column("Imagen")]
+        public string Imagen { get; set; }
+
         [Column("Email")]
         public string Email { get; set; }
 

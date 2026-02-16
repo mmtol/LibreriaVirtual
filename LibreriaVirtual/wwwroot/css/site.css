@@ -1,0 +1,96 @@
+﻿/* ===== LAYOUT GENERAL ===== */
+body {
+    margin: 0;
+    font-family: 'Segoe UI',sans-serif;
+    background: #f0fbfb;
+    display: flex;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: linear-gradient(180deg,#a8edea,#7ed6df,#6dd5c4);
+    padding-top: 20px;
+    z-index: 100;
+}
+
+/* ===== ZONA DERECHA ===== */
+.right-zone {
+    margin-left: 240px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+.topbar {
+    height: 80px;
+    background: #e6fbfb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    z-index: 10;
+}
+
+.titulo {
+    margin: 0;
+    color: #0f3d3e;
+    font-family: Impact, Charcoal, sans-serif;
+    font-size: 28px;
+}
+
+/* ===== BURBUJA PERFIL ===== */
+.perfil-burbuja {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .perfil-burbuja:hover {
+        transform: scale(1.08) rotate(4deg);
+    }
+
+    .perfil-burbuja img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+/* ===== CONTENIDO ===== */
+.contenido {
+    padding: 30px;
+}
+
+/* ===== MENU LINKS ===== */
+.menu {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+    .menu a {
+        background: white;
+        margin: 10px;
+        padding: 14px;
+        border-radius: 16px;
+        text-decoration: none;
+        color: #0f3d3e;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+        .menu a:hover {
+            transform: translateX(6px) scale(1.05);
+            background: #dff9fb;
+        }
