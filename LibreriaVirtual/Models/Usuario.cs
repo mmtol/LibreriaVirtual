@@ -19,7 +19,7 @@ namespace LibreriaVirtual.Models
         [Column("Email")]
         public string Email { get; set; }
 
-        [Column("Password")]
-        public string Password { get; set; }
+        [Column("Pass")]
+        public string Pass { get; set; }
     }
 }

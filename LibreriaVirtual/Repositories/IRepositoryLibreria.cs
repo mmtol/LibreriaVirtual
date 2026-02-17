@@ -24,7 +24,7 @@ namespace LibreriaVirtual.Repositories
         Task<List<Contenido>> FindContenidoTipoYGenero(string tipo, string genero);
 
         // RECOMENDACIONES
-        Task<List<Contenido>> GetRecomendacionesGenerosMasValorados();
-        Task<List<Contenido>> GetRecomendacionesMejorValorados();
+        Task<List<Contenido>> GetRecomendacionesGenerosMasValorados(int idUsuario);
+        Task<List<Contenido>> GetRecomendacionesMejorValorados(int idUsuario);
     }
 }
