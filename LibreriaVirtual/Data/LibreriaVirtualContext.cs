@@ -8,5 +8,7 @@ namespace LibreriaVirtual.Data
         public LibreriaVirtualContext(DbContextOptions<LibreriaVirtualContext> options) : base(options) { }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Contenido> Contenidos { get; set; }
+
+        public DbSet<Seguridad> Seguridads { get; set; }
     }
 }

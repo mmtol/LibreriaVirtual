@@ -1,9 +1,11 @@
 ﻿using LibreriaVirtual.Data;
+using LibreriaVirtual.Helpers;
 using LibreriaVirtual.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -21,27 +23,33 @@ namespace LibreriaVirtual.Repositories
     //end
     //go
 
-    //    create or alter procedure SP_REGISTRARSE
-    //(@nombre nvarchar(100), @imagen nvarchar(100), @email nvarchar(150), @pass nvarchar(255), @registroExitoso bit output)
+    //create or alter procedure sp_registrarse
+    //(@nombre nvarchar(100), @imagen nvarchar(100), @email nvarchar(150), @pass varbinary(MAX), @salt nvarchar(50), @registroExitoso bit output)
     //as
     //begin
     //    set @registroExitoso = 0;
-
     //    if not exists(select 1 from Usuarios where Email = @email)
     //    begin
-    //        insert into Usuarios(Nombre, Imagen, Email, Pass) values(@nombre, @imagen, @email, @pass);
-    //    set @registroExitoso = 1;
+    //        insert into Usuarios(Nombre, Imagen, Email, Pass)
+    //        values(@nombre, @imagen, @email, @pass);
+    //    declare @idUsuario int;
+    //        select @idUsuario = IdUsuario
+    //        from Usuarios
+    //        where Email = @email;
+    //    insert into Seguridad(IdUsuario, Salt)
+    //        values(@idUsuario, @salt);
+    //    set @registroexitoso = 1;
     //    end
     //end
     //go
 
     //create or alter procedure SP_LOGIN_USUARIO
-    //(@email nvarchar(150),@pass nvarchar(255))
+    //(@email nvarchar(150),@pass varbinary(MAX))
     //as
     //begin
     //    select IdUsuario, Nombre, Imagen, Email, Pass
     //    from Usuarios
-    //    where Email = @email and Pass = @pass;
+    //    where Pass = @pass;
     //end
     //go
 
@@ -114,6 +122,23 @@ namespace LibreriaVirtual.Repositories
     //    end
     //end
     //go
+    //create or alter procedure SP_UPDATE_OPINION
+    //(@idContenido int, @idUsuario int, @puntuacion int, @opinion nvarchar(500))
+    //as
+    //begin
+    //    update Contenido set Puntuacion = @puntuacion, Opinion = @opinion
+    //    where IdContenido = @IdContenido and IdUsuario = @IdUsuario;
+    //end
+    //go
+
+    //create or alter procedure SP_DELETE_CONTENIDO
+    //(@idContenido int, @idUsuario int)
+    //as
+    //begin
+    //    delete from Contenido
+    //    where IdContenido = @IdContenido and IdUsuario = @IdUsuario;
+    //    end
+    //    go
     #endregion
 
     public class RepositoryLibreria : IRepositoryLibreria
@@ -125,16 +150,20 @@ namespace LibreriaVirtual.Repositories
             this.context = context;
         }
 
-        public async Task<bool> Registrarse(string nombre, string imagen, string email, string pass)
+        public async Task<bool> RegistrarseAsync(string nombre, string imagen, string email, string pass)
         {
             //con el procedimiento verifica si ya existe el usuario y si no, se inserta
             //devuelve true si se ha creado correctamente y false si ya existe y no se ha creado
 
-            string sql = "SP_REGISTRARSE @nombre, @imagen, @email, @pass, @registroExitoso output";
+            string salt = HelperTools.GenerarSalt();
+            byte[] passHash = HelperCrytography.EncriptarPass(pass, salt);
+
+            string sql = "SP_REGISTRARSE @nombre, @imagen, @email, @pass, @salt, @registroExitoso output";
             SqlParameter pamNombre = new SqlParameter("@nombre", nombre);
             SqlParameter pamImagen = new SqlParameter("@imagen", imagen);
             SqlParameter pamEmail = new SqlParameter("@email", email);
-            SqlParameter pamPass = new SqlParameter("@pass", pass);
+            SqlParameter pamPass = new SqlParameter("@pass", passHash);
+            SqlParameter pamSalt = new SqlParameter("@salt", salt);
 
             SqlParameter pamExito = new SqlParameter("@registroExitoso", System.Data.SqlDbType.Bit);
             pamExito.Direction = System.Data.ParameterDirection.Output;
@@ -144,44 +173,106 @@ namespace LibreriaVirtual.Repositories
             return (bool)pamExito.Value;
         }
 
+        public async Task<string> FindSaltAsync(int idUsuario)
+        {
+            //devuelve el salt de un usuario
+            var consulta = from datos in context.Seguridads
+                           where datos.IdUsuario == idUsuario
+                           select datos;
+            Seguridad seguridad = await consulta.FirstOrDefaultAsync();
+            return seguridad.Salt;
+        }
+
         public async Task<Usuario> Login(string email, string pass)
         {
             //con el procedimiento almacenado verifica si el usuario existe y si la contraseña es correcta
             //si el usuario existe y la contraseña es correcta, se devuelve el usuario, sino se devuelve null
 
-            string sql = "SP_LOGIN_USUARIO @email, @pass";
-            SqlParameter pamEmail = new SqlParameter("@email", email);
-            SqlParameter pamPass = new SqlParameter("@pass", pass);
+            Usuario encontrado = await FindUsuarioAsync(email);
 
-            Usuario usuario = await context.Usuarios.FromSqlRaw(sql, pamEmail, pamPass).FirstOrDefaultAsync();
+            if (encontrado == null)
+            {
+                return null;
+            }
+            else
+            {
+                string salt = await FindSaltAsync(encontrado.IdUsuario);
+                byte[] passHash = HelperCrytography.EncriptarPass(pass, salt);
 
-            return usuario; //si es null es que no existe !!!!
+                string sql = "SP_LOGIN_USUARIO @email, @pass";
+                SqlParameter pamEmail = new SqlParameter("@email", email);
+                SqlParameter pamPass = new SqlParameter("@pass", passHash);
+
+                Usuario usuario = await context.Usuarios.FromSqlRaw(sql, pamEmail, pamPass).FirstOrDefaultAsync();
+
+                return usuario;
+            }
         }
 
-        public async Task UpdateUsuario(string nombre, string imagen, string email, string pass)
+        public async Task UpdateUsuarioAsync(string nombre, string imagen, string email, string pass) // esta bien ????
         {
             //hay que actualizar el usuario
+            Usuario usuario = new Usuario()
+            {
+                Nombre = nombre,
+                Imagen = imagen,
+                Email = email,
+                Pass = pass
+            };
+
+            await context.SaveChangesAsync();
         }
 
-        public async Task<Usuario> FindUsuario(int idUsuario) //??????????????????????
+        public async Task<Usuario> FindUsuarioAsync(string email)
         {
             //devuelve el usuario por su idUsuario
-            return new Usuario();
+            var consulta = from datos in context.Usuarios
+                           where datos.Email == email
+                           select datos;
+             Usuario usuario = await consulta.FirstOrDefaultAsync();
+             return usuario;
         }
 
-        public async Task<List<Contenido>> GetContenidosUsuario(int idUsuario)
+        public async Task<List<Contenido>> GetContenidosUsuarioAsync(int idUsuario)
         {
             //devuelve la lista de contenidos del usuario para el catalogo personal
-            return new List<Contenido>();
+            var consulta = from datos in context.Contenidos
+                           where datos.IdUsuario == idUsuario
+                           select datos;
+            List<Contenido> contenidosUsuario = await consulta.ToListAsync();
+            return contenidosUsuario;
         }
 
-        public async Task<List<Contenido>> FindContenidoTipoYGenero(string tipo, string genero)
+        public async Task<List<Contenido>> FindContenidoTipoYGeneroAsync(string tipo, string genero)
         {
             //si el tipo y/o el genero no son nulos, devuelven los contenidos que coincidan por ello
-            return new List<Contenido>();
+            var consulta = from datos in context.Contenidos
+                           select datos;
+
+            List<Contenido> contenidos = await consulta.ToListAsync();
+
+            foreach (Contenido contenido in contenidos)
+            {
+                if (tipo != null)
+                {
+                    if (contenido.Tipo != tipo)
+                    {
+                        contenidos.Remove(contenido);
+                    }
+                }
+                else if (genero != null)
+                {
+                    if (contenido.Genero != genero)
+                    {
+                        contenidos.Remove(contenido);
+                    }
+                }
+            }
+
+            return contenidos;
         }
 
-        public async Task<List<Contenido>> GetCatalogoPublico()
+        public async Task<List<Contenido>> GetCatalogoPublicoAsync()
         {
             //con el procedimiento almacenado, devuelve el catalogo publico
 
@@ -192,13 +283,17 @@ namespace LibreriaVirtual.Repositories
             return catalogoPublico;
         }
 
-        public async Task<List<Contenido>> GetCatalogoPersonal(int idUsuario)
+        public async Task<List<Contenido>> GetCatalogoPersonalAsync(int idUsuario)
         {
             //devuelve el catalogo personal del usuario
-            return new List<Contenido>();
+            var consulta = from datos in context.Contenidos
+                           where datos.IdUsuario == idUsuario
+                           select datos;
+            List<Contenido> catalogoPersonal = await consulta.ToListAsync();
+            return catalogoPersonal;
         }
 
-        public async Task<Contenido> InsertContenido(int idUsuario, string titulo, string tipo, string genero, string imagen)
+        public async Task<Contenido> InsertContenidoAsync(int idUsuario, string titulo, string tipo, string genero, string imagen)
         {
             //con el procedimiento inserta un contenido pendiente en el catalogo personal del usuario
             //al crearlo, lo devuelve para seguir editandolo
@@ -216,29 +311,54 @@ namespace LibreriaVirtual.Repositories
             return contenido;
         }
 
-        public async Task VerContenido(int idContenido, int puntuacion, string opinion)
+        public async Task VerContenidoAsync(int idContenido, int puntuacion, string opinion)
         {
             //con el procedimiento actualiza el contenido del catalogo personal del usuario a visto, con la puntuacion y opinion
+            string sql = "SP_VER_CONTENIDO @idContenido, @puntuacion, @opinion";
+            SqlParameter pamIdContenido = new SqlParameter("@idContenido", idContenido);
+            SqlParameter pamPuntuacion = new SqlParameter("@puntuacion", puntuacion);
+            SqlParameter pamOpinion = new SqlParameter("@opinion", opinion);
+
+            await context.Database.ExecuteSqlRawAsync(sql, pamIdContenido, pamPuntuacion, pamOpinion);
         }
 
-        public async Task ApropiarContenido(int idContenido, int idUsuario, string titulo, string tipo, string genero, string imagen)
+        public async Task ApropiarContenidoAsync(int idContenido, int idUsuario, string titulo, string tipo, string genero, string imagen)
         {
             //con el procedimiento, al escoger un contenido del catalogo publico, se mete al catalogo personal del usuario, con el estado pendiente
+            string sql = "SP_APROPIAR_CONTENIDO @idContenido, @idUsuario, @titulo, @tipo, @genero, @imagen";
+            SqlParameter pamIdContenido = new SqlParameter("@idContenido", idContenido);
+            SqlParameter pamIdUsuario = new SqlParameter("@idUsuario", idUsuario);
+            SqlParameter pamTitulo = new SqlParameter("@titulo", titulo);
+            SqlParameter pamTipo = new SqlParameter("@tipo", tipo);
+            SqlParameter pamGenero = new SqlParameter("@genero", genero);
+            SqlParameter pamImagen = new SqlParameter("@imagen", imagen);
+
+            await context.Database.ExecuteSqlRawAsync(sql, pamIdContenido, pamIdUsuario, pamTitulo, pamTipo, pamGenero, pamImagen);
         }
 
-        public async Task UpdateOpinion(int idContenido, int puntuacion, string opinion)
+        public async Task UpdateOpinionAsync(int idContenido, int idUsuario, int puntuacion, string opinion)
         {
-            //FALTA PROCEDIMIENTO ALMACENADO
-            //actualiza la opinion y puntuacion de un contenido del catalogo personal del usuario
+            //con el procedimmiento actualiza la opinion y puntuacion de un contenido del catalogo personal del usuario
+            string sql = "SP_UPDATE_OPINION @idContenido, @idUsuario, @puntuacion, @opinion";
+            SqlParameter pamIdContenido = new SqlParameter("@idContenido", idContenido);
+            SqlParameter pamIdUsuario = new SqlParameter("@idUsuario", idUsuario);
+            SqlParameter pamPuntuacion = new SqlParameter("@puntuacion", puntuacion);
+            SqlParameter pamOpinion = new SqlParameter("@opinion", opinion);
+
+            await context.Database.ExecuteSqlRawAsync(sql, pamIdContenido, pamIdUsuario, pamPuntuacion, pamOpinion);
         }
 
-        public async Task DeleteContenido(int idContenido)
+        public async Task DeleteContenidoAsync(int idContenido, int idUsuario)
         {
-            //FALTA PROCEDIMIENTO ALMACENADO
-            //elimina un contenido del catalogo personal del usuario
+            //con el procedimiento elimina un contenido del catalogo personal del usuario
+            string sql = "SP_DELETE_CONTENIDO @idContenido, @idUsuario";
+            SqlParameter pamIdContenido = new SqlParameter("@idContenido", idContenido);
+            SqlParameter pamIdUsuario = new SqlParameter("@idUsuario", idUsuario);
+
+            await context.Database.ExecuteSqlRawAsync(sql, pamIdContenido, pamIdUsuario);
         }
 
-        public async Task<List<Contenido>> GetRecomendacionesGenerosMasValorados(int IdUsuario)
+        public async Task<List<Contenido>> GetRecomendacionesGenerosMasValoradosAsync(int IdUsuario)
         {
             //con el procedimiento, devuelve una lista de contenidos del catalogo publico, que sean del genero mas valorado por el usuario
 
@@ -251,7 +371,7 @@ namespace LibreriaVirtual.Repositories
             return recomendacionesGenero;
         }
 
-        public async Task<List<Contenido>> GetRecomendacionesMejorValorados(int idUsuario)
+        public async Task<List<Contenido>> GetRecomendacionesMejorValoradosAsync(int idUsuario)
         {
             //con el procedimiento devuelve una lista de contenidos del catalogo publico, que sean todo notas 8/9/10
 

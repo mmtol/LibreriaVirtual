@@ -5,26 +5,26 @@ namespace LibreriaVirtual.Repositories
     public interface IRepositoryLibreria
     {
         // USUARIO
-        Task<bool> Registrarse(string nombre, string imagen, string email, string password);
+        Task<bool> RegistrarseAsync(string nombre, string imagen, string email, string password);
         Task<Usuario> Login(string email, string password);
-        Task UpdateUsuario(string nombre, string imagen, string email, string password);
-        Task<Usuario> FindUsuario(int idUsuario);
+        Task UpdateUsuarioAsync(string nombre, string imagen, string email, string password);
+        Task<Usuario> FindUsuarioAsync(string email);
 
         // CONTENIDO PERSONAL
-        Task<List<Contenido>> GetContenidosUsuario(int idUsuario);
-        Task<List<Contenido>> GetCatalogoPersonal(int idUsuario);
-        Task<Contenido> InsertContenido(int idUsuario, string titulo, string tipo, string genero, string imagen);
-        Task VerContenido(int idContenido, int puntuacion, string opinion);
-        Task ApropiarContenido(int idContenido, int idUsuario, string titulo, string tipo, string genero, string imagen);
-        Task UpdateOpinion(int idContenido, int puntuacion, string opinion);
-        Task DeleteContenido(int idContenido);
+        Task<List<Contenido>> GetContenidosUsuarioAsync(int idUsuario);
+        Task<List<Contenido>> GetCatalogoPersonalAsync(int idUsuario);
+        Task<Contenido> InsertContenidoAsync(int idUsuario, string titulo, string tipo, string genero, string imagen);
+        Task VerContenidoAsync(int idContenido, int puntuacion, string opinion);
+        Task ApropiarContenidoAsync(int idContenido, int idUsuario, string titulo, string tipo, string genero, string imagen);
+        Task UpdateOpinionAsync(int idContenido, int idUsuario, int puntuacion, string opinion);
+        Task DeleteContenidoAsync(int idContenido, int idUsuario);
 
         // CONTENIDO PUBLICO / BUSQUEDAS
-        Task<List<Contenido>> GetCatalogoPublico();
-        Task<List<Contenido>> FindContenidoTipoYGenero(string tipo, string genero);
+        Task<List<Contenido>> GetCatalogoPublicoAsync();
+        Task<List<Contenido>> FindContenidoTipoYGeneroAsync(string tipo, string genero);
 
         // RECOMENDACIONES
-        Task<List<Contenido>> GetRecomendacionesGenerosMasValorados(int idUsuario);
-        Task<List<Contenido>> GetRecomendacionesMejorValorados(int idUsuario);
+        Task<List<Contenido>> GetRecomendacionesGenerosMasValoradosAsync(int idUsuario);
+        Task<List<Contenido>> GetRecomendacionesMejorValoradosAsync(int idUsuario);
     }
 }

@@ -1,14 +1,13 @@
+using LibreriaVirtual.Data;
 using LibreriaVirtual.Repositories;
 using Microsoft.EntityFrameworkCore;
-using LibreriaVirtual.Repositories;
-using LibreriaVirtual.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddTransient<IRepositoryLibreria, RepositoryLibreria>();
-string connString = builder.Configuration.GetConnectionString("SqlConnection");
+string connString = builder.Configuration.GetConnectionString("SqlConnection")!;
 builder.Services.AddDbContext<LibreriaVirtualContext>(options => options.UseSqlServer(connString));
 
 var app = builder.Build();
