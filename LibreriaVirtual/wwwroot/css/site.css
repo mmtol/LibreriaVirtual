@@ -1,24 +1,24 @@
 ﻿/* ===== LAYOUT GENERAL ===== */
 body {
     margin: 0;
-    font-family: 'Segoe UI',sans-serif;
-    background: #f0fbfb;
+    font-family: 'Segoe UI', sans-serif;
+    background: #1a1a1a; /* fondo oscuro tipo cine */
+    color: #fff;
     display: flex;
 }
 
-/* ===== SIDEBAR ===== */
 .sidebar {
     width: 240px;
     height: 100vh;
     position: fixed;
     left: 0;
     top: 0;
-    background: linear-gradient(180deg,#a8edea,#7ed6df,#6dd5c4);
+    background: linear-gradient(180deg, #4d0000, #800000, #330000); /* rojo oscuro base */
     padding-top: 20px;
     z-index: 100;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.7);
 }
 
-/* ===== ZONA DERECHA ===== */
 .right-zone {
     margin-left: 240px;
     width: 100%;
@@ -26,33 +26,32 @@ body {
     flex-direction: column;
 }
 
-/* ===== HEADER ===== */
 .topbar {
     height: 80px;
-    background: #e6fbfb;
+    background: linear-gradient(90deg, #330000, #440d0d, #2b0000); /* topbar con degradado oscuro */
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 30px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
     z-index: 10;
 }
 
 .titulo {
     margin: 0;
-    color: #0f3d3e;
-    font-family: Impact, Charcoal, sans-serif;
-    font-size: 28px;
+    color: #f8f8f8; /* blanco cálido */
+    font-family: 'Fredoka One', cursive; /* nueva fuente divertida */
+    font-size: 32px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
 }
 
-/* ===== BURBUJA PERFIL ===== */
 .perfil-burbuja {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     overflow: hidden;
-    border: 4px solid white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    border: 4px solid #ff6f61;
+    box-shadow: 0 4px 15px rgba(255,111,97,0.5);
     cursor: pointer;
     transition: 0.2s;
 }
@@ -67,12 +66,10 @@ body {
         object-fit: cover;
     }
 
-/* ===== CONTENIDO ===== */
 .contenido {
     padding: 30px;
 }
 
-/* ===== MENU LINKS ===== */
 .menu {
     display: flex;
     flex-direction: column;
@@ -80,17 +77,98 @@ body {
 }
 
     .menu a {
-        background: white;
+        background: linear-gradient(135deg, #440d0d, #660000, #330000); /* botón rojo oscuro con degradado */
         margin: 10px;
         padding: 14px;
         border-radius: 16px;
         text-decoration: none;
-        color: #0f3d3e;
+        color: #ffdfd3; /* texto cálido claro */
         font-weight: 600;
-        transition: 0.2s;
+        transition: 0.3s;
     }
 
         .menu a:hover {
             transform: translateX(6px) scale(1.05);
-            background: #dff9fb;
+            background: linear-gradient(135deg, #ff4d4d, #ff6f61, #ff2a2a); /* rojo brillante al pasar el ratón */
         }
+
+/* ===== HOME - INDEX ===== */
+.home-hero {
+    position: relative;
+    width: 100%;
+    height: 80vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #1a1a1a;
+}
+
+.home-carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+    .home-carousel img {
+        position: absolute;
+        width: 320px;
+        max-width: 50%;
+        top: 50%;
+        left: -350px;
+        transform: translateY(-50%) scale(0.8);
+        opacity: 0;
+        z-index: 1;
+        border-radius: 25px;
+        border: 5px solid #ff6f61;
+        box-shadow: 0 20px 40px rgba(255,111,97,0.5);
+        animation: slideMove 12s linear infinite;
+    }
+
+        .home-carousel img:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .home-carousel img:nth-child(2) {
+            animation-delay: 4s;
+        }
+
+        .home-carousel img:nth-child(3) {
+            animation-delay: 8s;
+        }
+
+@keyframes slideMove {
+    0% {
+        left: -350px;
+        transform: translateY(-50%) scale(0.8);
+        opacity: 0;
+        z-index: 1;
+    }
+
+    25% {
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 1;
+        z-index: 10;
+    }
+
+    50% {
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 1;
+        z-index: 10;
+    }
+
+    75% {
+        left: 120%;
+        transform: translateY(-50%) scale(0.8);
+        opacity: 0;
+        z-index: 1;
+    }
+
+    100% {
+        left: 120%;
+        opacity: 0;
+        z-index: 1;
+    }
+}
