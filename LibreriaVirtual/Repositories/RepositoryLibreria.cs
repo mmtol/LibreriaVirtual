@@ -1,14 +1,8 @@
 ﻿using LibreriaVirtual.Data;
 using LibreriaVirtual.Helpers;
 using LibreriaVirtual.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LibreriaVirtual.Repositories
 {
@@ -23,7 +17,7 @@ namespace LibreriaVirtual.Repositories
     //end
     //go
 
-    //create or alter procedure sp_registrarse
+    //create or alter procedure SP_REGISTRARSE
     //(@nombre nvarchar(100), @imagen nvarchar(100), @email nvarchar(150), @pass varbinary(MAX), @salt nvarchar(50), @registroExitoso bit output)
     //as
     //begin
@@ -183,12 +177,12 @@ namespace LibreriaVirtual.Repositories
             return seguridad.Salt;
         }
 
-        public async Task<Usuario> Login(string email, string pass)
+        public async Task<Usuario> LoginAsync(string email, string pass)
         {
             //con el procedimiento almacenado verifica si el usuario existe y si la contraseña es correcta
             //si el usuario existe y la contraseña es correcta, se devuelve el usuario, sino se devuelve null
 
-            Usuario encontrado = await FindUsuarioAsync(email);
+            Usuario encontrado = await FindUsuarioEmailAsync(email);
 
             if (encontrado == null)
             {
@@ -209,21 +203,20 @@ namespace LibreriaVirtual.Repositories
             }
         }
 
-        public async Task UpdateUsuarioAsync(string nombre, string imagen, string email, string pass) // esta bien ????
+        public async Task UpdateUsuarioAsync(string nombre, string imagen, string email)
         {
             //hay que actualizar el usuario
             Usuario usuario = new Usuario()
             {
                 Nombre = nombre,
                 Imagen = imagen,
-                Email = email,
-                Pass = pass
+                Email = email
             };
 
             await context.SaveChangesAsync();
         }
 
-        public async Task<Usuario> FindUsuarioAsync(string email)
+        public async Task<Usuario> FindUsuarioEmailAsync(string email)
         {
             //devuelve el usuario por su idUsuario
             var consulta = from datos in context.Usuarios
@@ -231,6 +224,16 @@ namespace LibreriaVirtual.Repositories
                            select datos;
              Usuario usuario = await consulta.FirstOrDefaultAsync();
              return usuario;
+        }
+
+        public async Task<Usuario> FindUsuarioIdAsync(int idUsuario)
+        {
+            //devuelve el usuario por su idUsuario
+            var consulta = from datos in context.Usuarios
+                           where datos.IdUsuario == idUsuario
+                           select datos;
+            Usuario usuario = await consulta.FirstOrDefaultAsync();
+            return usuario;
         }
 
         public async Task<List<Contenido>> GetContenidosUsuarioAsync(int idUsuario)

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibreriaVirtual.Models
 {
-    [Table("CONTENIDO")]
+    [Table("Contenido")]
     public class Contenido
     {
         [Key]

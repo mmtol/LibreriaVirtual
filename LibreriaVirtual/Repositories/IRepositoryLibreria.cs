@@ -5,10 +5,11 @@ namespace LibreriaVirtual.Repositories
     public interface IRepositoryLibreria
     {
         // USUARIO
-        Task<bool> RegistrarseAsync(string nombre, string imagen, string email, string password);
-        Task<Usuario> Login(string email, string password);
-        Task UpdateUsuarioAsync(string nombre, string imagen, string email, string password);
-        Task<Usuario> FindUsuarioAsync(string email);
+        Task<bool> RegistrarseAsync(string nombre, string imagen, string email, string pass);
+        Task<Usuario> LoginAsync(string email, string pass);
+        Task UpdateUsuarioAsync(string nombre, string imagen, string email);
+        Task<Usuario> FindUsuarioEmailAsync(string email);
+        Task<Usuario> FindUsuarioIdAsync(int idUsuario);
 
         // CONTENIDO PERSONAL
         Task<List<Contenido>> GetContenidosUsuarioAsync(int idUsuario);

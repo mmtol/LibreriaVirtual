@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibreriaVirtual.Models
 {
-    [Table("USUARIOS")]
+    [Table("Usuarios")]
     public class Usuario
     {
         [Key]
-        [Column("IdUsuarios")]
+        [Column("IdUsuario")]
         public int IdUsuario { get; set; }
 
         [Column("Nombre")]
@@ -20,6 +20,6 @@ namespace LibreriaVirtual.Models
         public string Email { get; set; }
 
         [Column("Pass")]
-        public string Pass { get; set; }
+        public byte[] Pass { get; set; }
     }
 }

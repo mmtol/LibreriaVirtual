@@ -1,0 +1,11 @@
+﻿@model Usuario
+
+<form method="post">
+    <label>Nombre</label>
+    <input type="text" name="nombre" value="@Model.Nombre"/>
+    <label>Imagen</label>
+    <input type="file" name="fichero"/>
+    <label>Email</label>
+    <input type="text" name="email" value="@Model.Email"/>
+    <button>Editar</button>
+</form>

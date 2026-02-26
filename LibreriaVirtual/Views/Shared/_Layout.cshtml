@@ -1,43 +1,46 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var idUsuario = Context.Session.GetInt32("idUsuario");
+    var imgUsuario = Context.Session.GetString("imgUsuario");
+}
+
+<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <title>Librería Virtual</title>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
-</head>
+    <head>
+        <meta charset="utf-8" />
+        <title>Librería Virtual</title>
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    </head>
 
-<body>
+    <body>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <div class="menu">
-            <a asp-controller="Usuario" asp-action="Perfil">Perfil</a>
-            <a asp-controller="Contenido" asp-action="Personal">Catalogo Personal</a>
-            <a asp-controller="Contenido" asp-action="Index">Catalogo Publico</a>
-            <a asp-controller="Contenido" asp-action="Recomendaciones">Recomendaciones</a>
-            <a asp-controller="Account" asp-action="Logout">Cerrar Sesión</a>
-        </div>
-    </div>
-
-    <!-- ZONA DERECHA -->
-    <div class="right-zone">
-
-        <!-- HEADER -->
-        <div class="topbar">
-            <h1 class="titulo">LIBRERÍA VIRTUAL</h1>
-
-            <div class="perfil-burbuja">
-                <img src="~/images/users/default.jpg" />
+        <div class="sidebar">
+            <div class="menu">
+                <a asp-controller="Usuario" asp-action="Perfil">Perfil</a>
+                <a asp-controller="Contenido" asp-action="Personal">Catalogo Personal</a>
+                <a asp-controller="Contenido" asp-action="Index">Catalogo Publico</a>
+                <a asp-controller="Contenido" asp-action="Recomendaciones">Recomendaciones</a>
+                <a asp-controller="Account" asp-action="Logout" asp-route-idusuario=@idUsuario >Cerrar Sesión</a>
             </div>
         </div>
 
-        <!-- CONTENIDO -->
-        <div class="contenido">
-            @RenderBody()
+        <div class="right-zone">
+
+            <div class="topbar">
+                <h1 class="titulo">LIBRERÍA VIRTUAL</h1>
+
+                <div class="perfil-burbuja">
+                    <img src=@imgUsuario />
+                </div>
+            </div>
+
+            <div class="contenido">
+                @RenderBody()
+            </div>
+
         </div>
 
-    </div>
+    </body>
 
-</body>
+
 </html>
