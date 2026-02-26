@@ -339,6 +339,16 @@ namespace LibreriaVirtual.Repositories
             await context.Database.ExecuteSqlRawAsync(sql, pamIdContenido, pamIdUsuario, pamTitulo, pamTipo, pamGenero, pamImagen);
         }
 
+        public async Task<Contenido> FindContenido(int idContenido)
+        {
+            //saca un Contenido segun su id
+            var consulta = from datos in context.Contenidos
+                           where datos.IdContenido == idContenido
+                           select datos;
+            Contenido contenido = await consulta.FirstOrDefaultAsync();
+            return contenido;
+        }
+
         public async Task UpdateOpinionAsync(int idContenido, int idUsuario, int puntuacion, string opinion)
         {
             //con el procedimmiento actualiza la opinion y puntuacion de un contenido del catalogo personal del usuario

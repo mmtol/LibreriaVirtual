@@ -1,5 +1,8 @@
 ﻿namespace LibreriaVirtual.Helpers
 {
+    public enum Tipos { Pelicula, Serie, Documental}
+    public enum Generos { Accion, Comedia, Drama, Ficcion, Fantasia, Terror, Suspense, Romance, Familiar }
+
     public class HelperTools
     {
         public static string GenerarSalt()
