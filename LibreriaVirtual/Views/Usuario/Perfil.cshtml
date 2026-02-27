@@ -1,4 +1,7 @@
 ﻿@model Usuario
+@{
+    EstadisticasUsuario estadisticas = ViewData["estadisticas"] as EstadisticasUsuario;
+}
 
 <h1>Perfil</h1>
 
@@ -10,9 +13,23 @@
     Editar
 </a>
 
-VISTA SQL SERVER!!!!
-Meter recopilacion de
-    cuantos contenidos tiene en su catalogo personal en TOTAL
-    cuantos son series
-    cuantos son peliculas
-    cuantos tiene pendientes
+<hr/>
+
+<table>
+    <thead>
+        <tr>
+            <th>Total de contenidos</th>
+            <th>Series</th>
+            <th>Películas</th>
+            <th>Pendientes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@estadisticas.Total</td>
+            <td>@estadisticas.Series</td>
+            <td>@estadisticas.Peliculas</td>
+            <td>@estadisticas.Pendientes</td>
+        </tr>
+</table>
+

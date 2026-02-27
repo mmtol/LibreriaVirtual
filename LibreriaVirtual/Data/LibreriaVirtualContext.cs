@@ -10,5 +10,7 @@ namespace LibreriaVirtual.Data
         public DbSet<Contenido> Contenidos { get; set; }
 
         public DbSet<Seguridad> Seguridads { get; set; }
+
+        public DbSet<EstadisticasUsuario> EstadisticasUsuarios { get; set; }
     }
 }

@@ -19,6 +19,9 @@ namespace LibreriaVirtual.Controllers
 
         public async Task<IActionResult> Perfil()
         {
+            EstadisticasUsuario estadisticas = await repo.GetEstadisticasUsuarioAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+            ViewData["estadisticas"] = estadisticas;
+
             Usuario usuario = await repo.FindUsuarioIdAsync((int)HttpContext.Session.GetInt32("idUsuario"));
             return View(usuario);
         }

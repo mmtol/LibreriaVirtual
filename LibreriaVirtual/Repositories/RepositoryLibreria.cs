@@ -162,7 +162,7 @@ namespace LibreriaVirtual.Repositories
             SqlParameter pamExito = new SqlParameter("@registroExitoso", System.Data.SqlDbType.Bit);
             pamExito.Direction = System.Data.ParameterDirection.Output;
 
-            await context.Database.ExecuteSqlRawAsync(sql, pamNombre, pamImagen, pamEmail, pamPass, pamExito);
+            await context.Database.ExecuteSqlRawAsync(sql, pamNombre, pamImagen, pamEmail, pamPass, pamSalt, pamExito);
 
             return (bool)pamExito.Value;
         }
@@ -193,11 +193,10 @@ namespace LibreriaVirtual.Repositories
                 string salt = await FindSaltAsync(encontrado.IdUsuario);
                 byte[] passHash = HelperCrytography.EncriptarPass(pass, salt);
 
-                string sql = "SP_LOGIN_USUARIO @email, @pass";
-                SqlParameter pamEmail = new SqlParameter("@email", email);
+                string sql = "SP_LOGIN_USUARIO @pass";
                 SqlParameter pamPass = new SqlParameter("@pass", passHash);
 
-                Usuario usuario = await context.Usuarios.FromSqlRaw(sql, pamEmail, pamPass).FirstOrDefaultAsync();
+                Usuario usuario = context.Usuarios.FromSqlRaw(sql, pamPass).AsEnumerable().FirstOrDefault();
 
                 return usuario;
             }
@@ -222,8 +221,8 @@ namespace LibreriaVirtual.Repositories
             var consulta = from datos in context.Usuarios
                            where datos.Email == email
                            select datos;
-             Usuario usuario = await consulta.FirstOrDefaultAsync();
-             return usuario;
+            Usuario usuario = await consulta.FirstOrDefaultAsync();
+            return usuario;
         }
 
         public async Task<Usuario> FindUsuarioIdAsync(int idUsuario)
@@ -310,7 +309,7 @@ namespace LibreriaVirtual.Repositories
 
             var consulta = context.Contenidos.FromSqlRaw(sql, pamIdUsuario, pamTitulo, pamTipo, pamGenero, pamImagen);
             Contenido contenido = await consulta.FirstOrDefaultAsync();
-    
+
             return contenido;
         }
 
@@ -395,6 +394,16 @@ namespace LibreriaVirtual.Repositories
             List<Contenido> recomendacionesMejorValorados = await consulta.ToListAsync();
 
             return recomendacionesMejorValorados;
+        }
+
+        public async Task<EstadisticasUsuario> GetEstadisticasUsuarioAsync(int idUsuario)
+        {
+            //devuelve las estadisticas del usuario de la vista creada para el perfil
+            var consulta = from datos in context.EstadisticasUsuarios
+                           where datos.IdUsuario == idUsuario
+                           select datos;
+            EstadisticasUsuario estadisticas = await consulta.FirstOrDefaultAsync();
+            return estadisticas;
         }
     }
 }

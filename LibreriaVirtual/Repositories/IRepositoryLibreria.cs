@@ -10,6 +10,7 @@ namespace LibreriaVirtual.Repositories
         Task UpdateUsuarioAsync(string nombre, string imagen, string email);
         Task<Usuario> FindUsuarioEmailAsync(string email);
         Task<Usuario> FindUsuarioIdAsync(int idUsuario);
+        Task<EstadisticasUsuario> GetEstadisticasUsuarioAsync(int idUsuario);
 
         // CONTENIDO PERSONAL
         Task<List<Contenido>> GetContenidosUsuarioAsync(int idUsuario);
