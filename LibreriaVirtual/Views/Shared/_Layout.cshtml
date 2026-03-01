@@ -17,20 +17,20 @@
         <div class="sidebar">
             <div class="menu">
                 <a asp-controller="Usuario" asp-action="Perfil">Perfil</a>
-                <a asp-controller="Contenido" asp-action="Personal">Catalogo Personal</a>
-                <a asp-controller="Contenido" asp-action="Index">Catalogo Publico</a>
+                <a asp-controller="Contenido" asp-action="Index" asp-route-personal=@true>Catalogo Personal</a>
+                <a asp-controller="Contenido" asp-action="Index" asp-route-personal=@false>Catalogo Publico</a>
                 <a asp-controller="Contenido" asp-action="Recomendaciones">Recomendaciones</a>
-                <a asp-controller="Account" asp-action="Logout" asp-route-idusuario=@idUsuario >Cerrar Sesión</a>
+                <a asp-controller="Account" asp-action="Logout">Cerrar Sesión</a>
             </div>
         </div>
 
         <div class="right-zone">
 
             <div class="topbar">
-                <h1 class="titulo">LIBRERÍA VIRTUAL</h1>
+            <a class="titulo" asp-controller="Home" asp-action="Index">LIBRERÍA VIRTUAL</a>
 
                 <div class="perfil-burbuja">
-                    <img src=@imgUsuario />
+                    <img src="/@imgUsuario"/>
                 </div>
             </div>
 

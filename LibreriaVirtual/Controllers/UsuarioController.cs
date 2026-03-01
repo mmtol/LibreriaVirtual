@@ -68,7 +68,7 @@ namespace LibreriaVirtual.Controllers
                 await fichero.CopyToAsync(stream);
             }
 
-            return ruta;
+            return url;
         }
     }
 }

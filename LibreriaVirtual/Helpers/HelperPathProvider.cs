@@ -8,12 +8,10 @@ namespace LibreriaVirtual.Helpers
     public class HelperPathProvider
     {
         private IWebHostEnvironment host;
-        private IServer server;
 
-        public HelperPathProvider(IWebHostEnvironment host, IServer server)
+        public HelperPathProvider(IWebHostEnvironment host)
         {
             this.host = host;
-            this.server = server;
         }
 
         public string MapPath(string archivo, Carpetas carpeta)
@@ -43,9 +41,7 @@ namespace LibreriaVirtual.Helpers
             {
                 ruta = "images/users";
             }
-            var addresses = this.server.Features.Get<IServerAddressesFeature>().Addresses;
-            string serverUrl = addresses.FirstOrDefault();
-            string urlPath = serverUrl + "/" + ruta + "/" + archivo;
+            string urlPath = ruta + "/" + archivo;
             return urlPath;
         }
     }

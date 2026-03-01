@@ -58,7 +58,7 @@ namespace LibreriaVirtual.Controllers
                 await fichero.CopyToAsync(stream);
             }
 
-            return ruta;
+            return url;
         }
 
         [HttpPost]
@@ -79,8 +79,7 @@ namespace LibreriaVirtual.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult Logout(int idusuario)
+        public IActionResult Logout()
         {
             HttpContext.Session.Remove("idUsuario");
             HttpContext.Session.Remove("imgUsuario");

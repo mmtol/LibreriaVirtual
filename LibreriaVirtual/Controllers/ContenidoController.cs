@@ -5,8 +5,9 @@ namespace LibreriaVirtual.Controllers
 {
     public class ContenidoController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index(bool personal)
         {
+            ViewData["personal"] = personal;
             return View();
         }
 
@@ -21,8 +22,9 @@ namespace LibreriaVirtual.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(string tipo, string genero)
+        public IActionResult Index(string tipo, string genero, bool personal)
         {
+            ViewData["personal"] = personal;
             return View();
         }
 

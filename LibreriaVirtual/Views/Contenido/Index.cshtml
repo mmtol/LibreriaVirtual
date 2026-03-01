@@ -38,11 +38,40 @@ else
     </div>
 }
 
-@foreach (Contenido contenido in Model)
+@if (Model != null)
 {
-    if (personal)
+    @foreach (Contenido contenido in Model)
     {
-        if (contenido.IdUsuario == Context.Session.GetInt32("idUsuario"))
+        if (personal)
+        {
+            if (contenido.IdUsuario == Context.Session.GetInt32("idUsuario"))
+            {
+                <div>
+                    <img src=@contenido.Imagen />
+                    <h2>@contenido.Titulo</h2>
+                    <h3>@contenido.Tipo</h3>
+                    <h3>@contenido.Genero</h3>
+                    <a asp-controller="Contenido" asp-action="Details" asp-route-idcontenido=@contenido.IdContenido>
+                        Detalles
+                    </a>
+                    <a asp-controller="Contenido" asp-action="Ver" asp-route-idcontenido=@contenido.IdContenido>
+                        Marcar como visto
+                        //DEBE SALTAR UN SWEET PARA RELLENAR OPINION
+                    </a>
+                    <a asp-controller="Contenido" asp-action="Delete" asp-route-idcontenido=@contenido.IdContenido>
+                        Eliminar
+                    </a>
+                    @if (contenido.Estado == "visto")
+                    {
+                        <a asp-controller="Contenido" asp-action="UpdateOpnion" asp-route-idcontenido=@contenido.IdContenido>
+                            Modificar puntuación
+                            //DEBE SALTAR UN SWEET PARA CAMBIAR OPINION
+                        </a>
+                    }
+                </div>
+            }
+        }
+        else
         {
             <div>
                 <img src=@contenido.Imagen />
@@ -52,36 +81,10 @@ else
                 <a asp-controller="Contenido" asp-action="Details" asp-route-idcontenido=@contenido.IdContenido>
                     Detalles
                 </a>
-                <a asp-controller="Contenido" asp-action="Ver" asp-route-idcontenido=@contenido.IdContenido>
-                    Marcar como visto
-                    //DEBE SALTAR UN SWEET PARA RELLENAR OPINION
+                <a asp-controller="Contenido" asp-action="Apropiar" asp-route-idcontenido=@contenido.IdContenido>
+                    Añadir al catalogo personal
                 </a>
-                <a asp-controller="Contenido" asp-action="Delete" asp-route-idcontenido=@contenido.IdContenido>
-                    Eliminar
-                </a>
-                @if (contenido.Estado == "visto")
-                {
-                    <a asp-controller="Contenido" asp-action="UpdateOpnion" asp-route-idcontenido=@contenido.IdContenido>
-                        Modificar puntuación
-                        //DEBE SALTAR UN SWEET PARA CAMBIAR OPINION
-                    </a>
-                }
-            </div> 
+            </div>
         }
-    }
-    else
-    {
-        <div>
-            <img src=@contenido.Imagen />
-            <h2>@contenido.Titulo</h2>
-            <h3>@contenido.Tipo</h3>
-            <h3>@contenido.Genero</h3>
-            <a asp-controller="Contenido" asp-action="Details" asp-route-idcontenido=@contenido.IdContenido>
-                Detalles
-            </a>
-            <a asp-controller="Contenido" asp-action="Apropiar" asp-route-idcontenido=@contenido.IdContenido>
-                Añadir al catalogo personal
-            </a>
-        </div>
     }
 }
