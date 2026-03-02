@@ -2,16 +2,77 @@
     Layout = null;
 }
 
-<form enctype="multipart/form-data" asp-controller="Account" asp-action="Registro" method="post">
-    <label>Nombre</label>
-    <input type="text" name="nombre" />
-    <label>Imagen</label>
-    <input type="file" name="fichero" />
-    <label>Email</label>
-    <input type="text" name="email" />
-    <label>Contraseña</label>
-    <input type="text" name="pass" />
-    <button>Registrarse</button>
-</form>
+<head>
+    <meta charset="utf-8" />
+    <title>Login</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
 
-<a asp-controller="Account" asp-action="Login">Iniciar sesion</a>
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-card-content">
+            <h1>Registro</h1>
+            <p class="subtitle">Crea tu cuenta de manera rápida y segura</p>
+
+            <form enctype="multipart/form-data" asp-controller="Account" asp-action="Registro" method="post">
+                <div class="input-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" required />
+                </div>
+
+                <div class="input-group">
+                    <label>Imagen de perfil</label>
+                    <div class="custom-file-input">
+                        <button type="button" id="selectImageBtn">Seleccionar imagen</button>
+                        <input type="file" id="fichero" name="fichero" accept="image/*" />
+                    </div>
+                    <div class="preview-container">
+                        <img id="preview" src="" alt="" />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required />
+                </div>
+
+                <div class="input-group">
+                    <label for="pass">Contraseña</label>
+                    <input type="password" id="pass" name="pass" required />
+                </div>
+
+                <button type="submit">Registrarse</button>
+            </form>
+
+            <p class="register-link">
+                ¿Ya tienes cuenta?
+                <a asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fichero');
+    const previewImg = document.getElementById('preview');
+    const selectBtn = document.getElementById('selectImageBtn');
+
+    selectBtn.addEventListener('click', () => {
+        fileInput.click(); // al hacer clic en el botón, abrimos el explorador
+    });
+
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.setAttribute('src', e.target.result);
+                previewImg.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            previewImg.setAttribute('src', '');
+            previewImg.style.display = 'none';
+        }
+    });
+</script>

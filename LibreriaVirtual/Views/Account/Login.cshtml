@@ -2,21 +2,42 @@
     Layout = null;
 }
 
-<form method="post">
-    <label>Email</label>
-    <input type="text" name="email"/>
-    <label>Contraseña</label>
-    <input type="text" name="pass" />
-    <button>Iniciar sesión</button>
-</form>
+<head>
+    <meta charset="utf-8" />
+    <title>Login</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
 
-<a asp-controller="Account" asp-action="Registro">Registrarse</a>
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-card-content">
+            <img src="~/images/login-illustration.webp" alt="Login illustration" class="login-img" />
+            <h1>Bienvenida</h1>
+            <p class="subtitle">Accede a tu cuenta para continuar</p>
 
-@if (TempData["resultado"] != null)
-{
-    <div class="alert">
-        @TempData["Mensaje"]
+            @if (ViewData["error"] != null)
+            {
+                <div class="alert">@ViewData["error"]</div>
+            }
+
+            <form method="post">
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="text" name="email" placeholder="correo@ejemplo.com" required />
+                </div>
+
+                <div class="input-group">
+                    <label>Contraseña</label>
+                    <input type="password" name="pass" placeholder="••••••••" required />
+                </div>
+
+                <button type="submit">Iniciar sesión</button>
+            </form>
+
+            <p class="register-link">
+                ¿No tienes cuenta?
+                <a asp-controller="Account" asp-action="Registro">Crear cuenta</a>
+            </p>
+        </div>
     </div>
-}
-
-<h2>@ViewData["error"]</h2>
+</div>

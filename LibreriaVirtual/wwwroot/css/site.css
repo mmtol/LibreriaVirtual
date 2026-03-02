@@ -1,24 +1,26 @@
 ﻿/* ===== LAYOUT GENERAL ===== */
-body {
+body.layout-page {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: #1a1a1a; /* fondo oscuro tipo cine */
-    color: #fff;
+    background: #f4f7fa; /* fondo claro profesional */
+    color: #1a1a1a;
     display: flex;
 }
 
+/* ===== SIDEBAR ===== */
 .sidebar {
     width: 240px;
     height: 100vh;
     position: fixed;
     left: 0;
     top: 0;
-    background: linear-gradient(180deg, #4d0000, #800000, #330000); /* rojo oscuro base */
+    background: #1f3c5d; /* azul oscuro sólido */
     padding-top: 20px;
     z-index: 100;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.7);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.3);
 }
 
+/* ===== RIGHT ZONE ===== */
 .right-zone {
     margin-left: 240px;
     width: 100%;
@@ -26,38 +28,40 @@ body {
     flex-direction: column;
 }
 
+/* ===== TOPBAR ===== */
 .topbar {
     height: 80px;
-    background: linear-gradient(90deg, #330000, #440d0d, #2b0000); /* topbar con degradado oscuro */
+    background: #2a4a7b; /* azul medio */
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 30px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     z-index: 10;
 }
 
+/* ===== TITULO ===== */
 .titulo {
     margin: 0;
-    color: #f8f8f8; /* blanco cálido */
-    font-family: 'Fredoka One', cursive; /* nueva fuente divertida */
-    font-size: 32px;
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+    color: #ffffff; /* blanco limpio */
+    font-family: 'Segoe UI', sans-serif; /* sobrio y profesional */
+    font-size: 28px;
 }
 
+/* ===== PERFIL ===== */
 .perfil-burbuja {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     overflow: hidden;
-    border: 4px solid #ff6f61;
-    box-shadow: 0 4px 15px rgba(255,111,97,0.5);
+    border: 3px solid #4da6ff; /* azul suave */
+    box-shadow: 0 4px 12px rgba(0, 128, 255, 0.3);
     cursor: pointer;
     transition: 0.2s;
 }
 
     .perfil-burbuja:hover {
-        transform: scale(1.08) rotate(4deg);
+        transform: scale(1.08) rotate(2deg);
     }
 
     .perfil-burbuja img {
@@ -66,10 +70,12 @@ body {
         object-fit: cover;
     }
 
+/* ===== CONTENIDO ===== */
 .contenido {
     padding: 30px;
 }
 
+/* ===== MENU ===== */
 .menu {
     display: flex;
     flex-direction: column;
@@ -77,19 +83,19 @@ body {
 }
 
     .menu a {
-        background: linear-gradient(135deg, #440d0d, #660000, #330000); /* botón rojo oscuro con degradado */
+        background: #3b5998; /* azul profesional */
         margin: 10px;
         padding: 14px;
-        border-radius: 16px;
+        border-radius: 12px;
         text-decoration: none;
-        color: #ffdfd3; /* texto cálido claro */
+        color: #ffffff;
         font-weight: 600;
-        transition: 0.3s;
+        transition: 0.2s;
     }
 
         .menu a:hover {
-            transform: translateX(6px) scale(1.05);
-            background: linear-gradient(135deg, #ff4d4d, #ff6f61, #ff2a2a); /* rojo brillante al pasar el ratón */
+            transform: translateX(4px) scale(1.03);
+            background: #5874b8; /* azul un poco más claro al hover */
         }
 
 /* ===== HOME - INDEX ===== */
@@ -101,9 +107,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #1a1a1a;
+    background: #f4f7fa; /* mismo fondo claro */
 }
 
+/* ===== CARRUSEL ===== */
 .home-carousel {
     position: relative;
     width: 100%;
@@ -119,9 +126,9 @@ body {
         transform: translateY(-50%) scale(0.8);
         opacity: 0;
         z-index: 1;
-        border-radius: 25px;
-        border: 5px solid #ff6f61;
-        box-shadow: 0 20px 40px rgba(255,111,97,0.5);
+        border-radius: 20px;
+        border: 4px solid #4da6ff;
+        box-shadow: 0 15px 30px rgba(77, 166, 255, 0.3);
         animation: slideMove 12s linear infinite;
     }
 
@@ -147,14 +154,14 @@ body {
 
     25% {
         left: 50%;
-        transform: translate(-50%, -50%) scale(1.5);
+        transform: translate(-50%, -50%) scale(1.4);
         opacity: 1;
         z-index: 10;
     }
 
     50% {
         left: 50%;
-        transform: translate(-50%, -50%) scale(1.5);
+        transform: translate(-50%, -50%) scale(1.4);
         opacity: 1;
         z-index: 10;
     }
@@ -171,4 +178,162 @@ body {
         opacity: 0;
         z-index: 1;
     }
+}
+
+/* ===== LOGIN ===== */
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.login-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    padding: 40px;
+    width: 400px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .login-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    }
+
+.login-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-img {
+    width: 300px;
+    margin-bottom: 20px;
+}
+
+.login-card h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #1f3c5d;
+}
+
+.subtitle {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #6b7280;
+    text-align: center;
+}
+
+.input-group {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+    .input-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #1f3c5d;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        outline: none;
+        transition: 0.2s;
+    }
+
+        .input-group input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #1f3c5d;
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    button:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+    }
+
+.register-link {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #6b7280;
+    text-align: center;
+}
+
+    .register-link a {
+        color: #2563eb;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+.alert {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* ===== REGISTRO ===== */
+.custom-file-input {
+    position: relative;
+    width: 100%;
+}
+
+    .custom-file-input input[type="file"] {
+        display: none;
+    }
+
+    .custom-file-input button {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        background: #1f3c5d;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .custom-file-input button:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+.preview-container img {
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 12px;
+    border: 2px solid #4da6ff;
+    box-shadow: 0 5px 15px rgba(77, 166, 255, 0.2);
+    display: none;
+    margin-top: 10px;
 }

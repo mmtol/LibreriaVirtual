@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Views\Shared\" />
     <Folder Include="wwwroot\images\contenidos\" />
     <Folder Include="wwwroot\images\users\" />
     <Folder Include="wwwroot\js\" />

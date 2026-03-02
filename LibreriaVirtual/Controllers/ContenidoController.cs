@@ -45,7 +45,7 @@ namespace LibreriaVirtual.Controllers
                 }
             }
 
-            return View();
+            return View(contenidos);
         }
 
         public async Task<IActionResult> Create()
