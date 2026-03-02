@@ -1,0 +1,28 @@
+﻿@using LibreriaVirtual.Helpers;
+
+<div>
+    <h1>Nuevo contenido</h1>
+    <form enctype="multipart/form-data" asp-controller="Contenido" asp-action="Create" method="post">
+        <label>Titulo</label>
+        <input type="text" name="Titulo"/>
+        <label>Tipo</label>
+        <select name="tipo">
+            <option>-- Elige el tipo --</option>
+            @foreach (Tipos tipo in Tipos.GetValues(typeof(Tipos)))
+            {
+                <option>@tipo</option>
+            }
+        </select>
+        <label>Genero</label>
+        <select name="genero">
+            <option>-- Elige el genero --</option>
+            @foreach (Generos genero in Generos.GetValues(typeof(Generos)))
+            {
+                <option>@genero</option>
+            }
+        </select>
+        <label>Imagen</label>
+        <input type="file" name="fichero" />
+        <button>Crear</button>
+    </form>
+</div>

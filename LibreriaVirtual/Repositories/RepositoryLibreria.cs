@@ -7,16 +7,6 @@ using Microsoft.EntityFrameworkCore;
 namespace LibreriaVirtual.Repositories
 {
     #region STORED PROCEDURES
-    //create or alter procedure SP_CATALOGO_PUBLICO
-    //as
-    //begin
-    //    select Titulo, Tipo, Genero, Imagen
-    //    from Contenido
-    //    group by Titulo, Tipo, Genero, Imagen
-    //    order by Titulo;
-    //end
-    //go
-
     //create or alter procedure SP_REGISTRARSE
     //(@nombre nvarchar(100), @imagen nvarchar(100), @email nvarchar(150), @pass varbinary(MAX), @salt nvarchar(50), @registroExitoso bit output)
     //as
@@ -202,15 +192,14 @@ namespace LibreriaVirtual.Repositories
             }
         }
 
-        public async Task UpdateUsuarioAsync(string nombre, string imagen, string email)
+        public async Task UpdateUsuarioAsync(int idUsuario, string nombre, string imagen, string email)
         {
             //hay que actualizar el usuario
-            Usuario usuario = new Usuario()
-            {
-                Nombre = nombre,
-                Imagen = imagen,
-                Email = email
-            };
+            Usuario usuario = await FindUsuarioIdAsync(idUsuario);
+
+            usuario.Nombre = nombre;
+            usuario.Imagen = imagen;
+            usuario.Email = email;
 
             await context.SaveChangesAsync();
         }
@@ -245,10 +234,11 @@ namespace LibreriaVirtual.Repositories
             return contenidosUsuario;
         }
 
-        public async Task<List<Contenido>> FindContenidoTipoYGeneroAsync(string tipo, string genero)
+        public async Task<List<Contenido>> FindContenidoTipoYGeneroAsync(string tipo, string genero, int idUsuario)
         {
             //si el tipo y/o el genero no son nulos, devuelven los contenidos que coincidan por ello
             var consulta = from datos in context.Contenidos
+                           where datos.IdUsuario != idUsuario
                            select datos;
 
             List<Contenido> contenidos = await consulta.ToListAsync();
@@ -274,14 +264,15 @@ namespace LibreriaVirtual.Repositories
             return contenidos;
         }
 
-        public async Task<List<Contenido>> GetCatalogoPublicoAsync()
+        public async Task<List<Contenido>> GetCatalogoPublicoAsync(int idUsuario)
         {
-            //con el procedimiento almacenado, devuelve el catalogo publico
+            //devuelve el catalogo publico exceptuando los del usuario
+            var consulta = from datos in context.Contenidos
+                           where datos.IdUsuario != idUsuario
+                           group datos by datos.Titulo into grupo
+                           select grupo.First();
 
-            string sql = "SP_CATALOGO_PUBLICO";
-            var consulta = context.Contenidos.FromSqlRaw(sql);
             List<Contenido> catalogoPublico = await consulta.ToListAsync();
-
             return catalogoPublico;
         }
 
@@ -307,9 +298,10 @@ namespace LibreriaVirtual.Repositories
             SqlParameter pamGenero = new SqlParameter("@genero", genero);
             SqlParameter pamImagen = new SqlParameter("@imagen", imagen);
 
-            var consulta = context.Contenidos.FromSqlRaw(sql, pamIdUsuario, pamTitulo, pamTipo, pamGenero, pamImagen);
-            Contenido contenido = await consulta.FirstOrDefaultAsync();
-
+            Contenido contenido = context.Contenidos
+                                .FromSqlRaw(sql, pamIdUsuario, pamTitulo, pamTipo, pamGenero, pamImagen)
+                                .AsEnumerable()
+                                .FirstOrDefault();
             return contenido;
         }
 
@@ -338,7 +330,7 @@ namespace LibreriaVirtual.Repositories
             await context.Database.ExecuteSqlRawAsync(sql, pamIdContenido, pamIdUsuario, pamTitulo, pamTipo, pamGenero, pamImagen);
         }
 
-        public async Task<Contenido> FindContenido(int idContenido)
+        public async Task<Contenido> FindContenidoAsync(int idContenido)
         {
             //saca un Contenido segun su id
             var consulta = from datos in context.Contenidos

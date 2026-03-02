@@ -1,55 +1,122 @@
 ﻿using LibreriaVirtual.Helpers;
+using LibreriaVirtual.Models;
+using LibreriaVirtual.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LibreriaVirtual.Controllers
 {
     public class ContenidoController : Controller
     {
-        public IActionResult Index(bool personal)
+        private IRepositoryLibreria repo;
+        private HelperPathProvider helper;
+
+        public ContenidoController(IRepositoryLibreria repo, HelperPathProvider helper)
+        {
+            this.repo = repo;
+            this.helper = helper;
+        }
+
+        public async Task<IActionResult> Index(bool personal, string accion)
         {
             ViewData["personal"] = personal;
+
+            List<Contenido> contenidos = new List<Contenido>();
+            if (accion != null)
+            {
+                if (accion == "genero")
+                {
+                    contenidos = await repo.GetRecomendacionesGenerosMasValoradosAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                }
+                else if (accion == "puntuacion")
+                {
+                    contenidos = await repo.GetRecomendacionesMejorValoradosAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                }
+            }
+            else
+            {
+                if (personal)
+                {
+                    contenidos = await repo.GetCatalogoPersonalAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                }
+                else
+                {
+                    contenidos = await repo.GetCatalogoPublicoAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                }
+            }
+
             return View();
         }
 
-        public IActionResult Details()
+        public async Task<IActionResult> Create()
         {
             return View();
         }
 
-        public IActionResult Recomendaciones()
+        public async Task<IActionResult> Details(int idcontenido)
+        {
+            Contenido contenido = await repo.FindContenidoAsync(idcontenido);
+            return View(contenido);
+        }
+
+        public IActionResult Recomendaciones(string accion)
         {
             return View();
+        }
+        public async Task<IActionResult> Ver(int idcontenido, int puntuacion, string opinion)
+        {
+            await repo.VerContenidoAsync(idcontenido, puntuacion, opinion);
+            return RedirectToAction("Index", new { personal = true });
+        }
+
+        public async Task<IActionResult> Delete(int idcontenido)
+        {
+            await repo.DeleteContenidoAsync(idcontenido, (int)HttpContext.Session.GetInt32("idUsuario"));
+            return RedirectToAction("Index", new { personal = true });
+        }
+
+        public async Task<IActionResult> UpdateOpinion(int idcontenido, int puntuacion, string opinion)
+        {
+            await repo.UpdateOpinionAsync(idcontenido, (int)HttpContext.Session.GetInt32("idUsuario"), puntuacion, opinion);
+            return RedirectToAction("Index", new { personal = true });
+        }
+
+        public async Task<IActionResult> Apropiar(int idcontenido, string titulo, string tipo, string genero, string imagen)
+        {
+            await repo.ApropiarContenidoAsync(idcontenido, (int)HttpContext.Session.GetInt32("idUsuario"), titulo, tipo, genero, imagen);
+            return RedirectToAction("Index", new { personal = false });
         }
 
         [HttpPost]
-        public IActionResult Index(string tipo, string genero, bool personal)
+        public async Task<IActionResult> Index(string tipo, string genero, bool personal)
         {
             ViewData["personal"] = personal;
+            List<Contenido> contenidos = new List<Contenido>();
+            contenidos = await repo.FindContenidoTipoYGeneroAsync(tipo, genero, (int)HttpContext.Session.GetInt32("idUsuario"));
             return View();
         }
 
         [HttpPost]
-        public IActionResult Ver(int idcontenido, int puntuacion, string opinion)
+        public async Task<IActionResult> Create(string titulo, string tipo, string genero, IFormFile fichero)
         {
-            return View();
+            string imagen = await SubirFileAsync(fichero);
+
+            await repo.InsertContenidoAsync((int)HttpContext.Session.GetInt32("idUsuario"), titulo, tipo, genero, imagen);
+            return RedirectToAction("Index", new { personal = true });
         }
 
-        [HttpPost]
-        public IActionResult Delete(int idcontenido)
+        private async Task<string> SubirFileAsync(IFormFile fichero)
         {
-            return View();
-        }
+            string file = (int)HttpContext.Session.GetInt32("idUsuario") + "_" + fichero.FileName;
+            string ruta = helper.MapPath(file, Carpetas.Contenidos);
+            string url = helper.MapUrlPath(file, Carpetas.Contenidos);
 
-        [HttpPost]
-        public IActionResult UpdateOpinion(int idcontenido, int puntuacion, string opinion)
-        {
-            return View();
-        }
+            using (Stream stream = new FileStream(ruta, FileMode.Create))
+            {
+                await fichero.CopyToAsync(stream);
+            }
 
-        [HttpPost]
-        public IActionResult Apropiar(int idcontenido)
-        {
-            return View();
+            return url;
         }
     }
 }

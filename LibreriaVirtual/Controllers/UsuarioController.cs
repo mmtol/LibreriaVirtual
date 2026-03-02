@@ -37,7 +37,7 @@ namespace LibreriaVirtual.Controllers
         {
             string imagen = await ComprobarImagenAsync(fichero);
 
-            await repo.UpdateUsuarioAsync(nombre, imagen, email);
+            await repo.UpdateUsuarioAsync((int)HttpContext.Session.GetInt32("idUsuario"), nombre, imagen, email);
 
             return RedirectToAction("Perfil");
         }
@@ -45,9 +45,11 @@ namespace LibreriaVirtual.Controllers
         private async Task<string> ComprobarImagenAsync(IFormFile fichero)
         {
             string imagen;
-            if (fichero != null)
+            if (fichero != null && fichero.Length > 0)
             {
                 imagen = await SubirFileAsync(fichero);
+                HttpContext.Session.Remove("imgUsuario");
+                HttpContext.Session.SetString("imgUsuario", imagen);
             }
             else
             {

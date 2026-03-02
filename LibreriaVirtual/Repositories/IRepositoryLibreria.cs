@@ -7,7 +7,7 @@ namespace LibreriaVirtual.Repositories
         // USUARIO
         Task<bool> RegistrarseAsync(string nombre, string imagen, string email, string pass);
         Task<Usuario> LoginAsync(string email, string pass);
-        Task UpdateUsuarioAsync(string nombre, string imagen, string email);
+        Task UpdateUsuarioAsync(int idUsuario, string nombre, string imagen, string email);
         Task<Usuario> FindUsuarioEmailAsync(string email);
         Task<Usuario> FindUsuarioIdAsync(int idUsuario);
         Task<EstadisticasUsuario> GetEstadisticasUsuarioAsync(int idUsuario);
@@ -18,13 +18,13 @@ namespace LibreriaVirtual.Repositories
         Task<Contenido> InsertContenidoAsync(int idUsuario, string titulo, string tipo, string genero, string imagen);
         Task VerContenidoAsync(int idContenido, int puntuacion, string opinion);
         Task ApropiarContenidoAsync(int idContenido, int idUsuario, string titulo, string tipo, string genero, string imagen);
-        Task<Contenido> FindContenido(int idContenido);
+        Task<Contenido> FindContenidoAsync(int idContenido);
         Task UpdateOpinionAsync(int idContenido, int idUsuario, int puntuacion, string opinion);
         Task DeleteContenidoAsync(int idContenido, int idUsuario);
 
         // CONTENIDO PUBLICO / BUSQUEDAS
-        Task<List<Contenido>> GetCatalogoPublicoAsync();
-        Task<List<Contenido>> FindContenidoTipoYGeneroAsync(string tipo, string genero);
+        Task<List<Contenido>> GetCatalogoPublicoAsync(int idUsuario);
+        Task<List<Contenido>> FindContenidoTipoYGeneroAsync(string tipo, string genero, int idUsuario);
 
         // RECOMENDACIONES
         Task<List<Contenido>> GetRecomendacionesGenerosMasValoradosAsync(int idUsuario);

@@ -1,6 +1,6 @@
 ﻿@model Usuario
 
-<form method="post">
+<form enctype="multipart/form-data" asp-controller="Usuario" asp-action="Editar" method="post">
     <label>Nombre</label>
     <input type="text" name="nombre" value="@Model.Nombre"/>
     <label>Imagen</label>

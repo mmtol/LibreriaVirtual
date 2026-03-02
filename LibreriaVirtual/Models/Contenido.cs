@@ -26,12 +26,12 @@ namespace LibreriaVirtual.Models
         public string Imagen { get; set; }
 
         [Column("Estado")]
-        public string Estado { get; set; }
+        public string ?Estado { get; set; }
 
         [Column("Puntuacion")]
-        public int Puntuacion { get; set; }
+        public int ?Puntuacion { get; set; }
 
         [Column("Opinion")]
-        public string Opinion { get; set; }
+        public string ?Opinion { get; set; }
     }
 }

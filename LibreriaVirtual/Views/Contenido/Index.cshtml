@@ -37,6 +37,12 @@ else
         </form>
     </div>
 }
+else
+{
+    <div>
+        <a asp-controller="Contenido" asp-action="Create">Nuevo</a>
+    </div>
+}
 
 @if (Model != null)
 {
@@ -81,7 +87,7 @@ else
                 <a asp-controller="Contenido" asp-action="Details" asp-route-idcontenido=@contenido.IdContenido>
                     Detalles
                 </a>
-                <a asp-controller="Contenido" asp-action="Apropiar" asp-route-idcontenido=@contenido.IdContenido>
+                <a asp-controller="Contenido" asp-action="Apropiar" asp-route-idcontenido=@contenido.IdContenido asp-route-titulo=@contenido.Titulo asp-route-tipo=@contenido.Tipo asp-route-genero=@contenido.Genero asp-route-imagen=@contenido.Imagen>
                     Añadir al catalogo personal
                 </a>
             </div>
