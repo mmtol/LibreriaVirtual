@@ -8,22 +8,22 @@ namespace LibreriaVirtual.Models
     {
         [Key]
         [Column("IdContenido")]
-        public int ?IdContenido { get; set; }
+        public int IdContenido { get; set; }
 
         [Column("IdUsuario")]
-        public int ?IdUsuario { get; set; }
+        public int IdUsuario { get; set; }
 
         [Column("Titulo")]
-        public string ?Titulo { get; set; }
+        public string Titulo { get; set; }
 
         [Column("Tipo")]
-        public string ?Tipo { get; set; }
+        public string Tipo { get; set; }
 
         [Column("Genero")]
-        public string ?Genero { get; set; }
+        public string Genero { get; set; }
 
         [Column("Imagen")]
-        public string ?Imagen { get; set; }
+        public string Imagen { get; set; }
 
         [Column("Estado")]
         public string ?Estado { get; set; }

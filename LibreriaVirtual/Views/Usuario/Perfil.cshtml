@@ -3,33 +3,47 @@
     EstadisticasUsuario estadisticas = ViewData["estadisticas"] as EstadisticasUsuario;
 }
 
-<h1>Perfil</h1>
+<div class="perfil-container">
 
-<h2>@Model.Nombre</h2>
-<img src="/@Model.Imagen" style="width:50px"/>
-<h2>@Model.Email</h2>
+    <!-- CABECERA PERFIL -->
+    <div class="perfil-header">
+        <div class="perfil-img-wrapper">
+            <img src="/@Model.Imagen" alt="@Model.Nombre" />
+        </div>
 
-<a asp-action="Editar" asp-controller="Usuario">
-    Editar
-</a>
+        <div class="perfil-info">
+            <h1>@Model.Nombre</h1>
+            <p>@Model.Email</p>
 
-<hr/>
+            <a asp-action="Editar" asp-controller="Usuario" class="btn-editar">
+                Editar Perfil
+            </a>
+        </div>
+    </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Total de contenidos</th>
-            <th>Series</th>
-            <th>Películas</th>
-            <th>Pendientes</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>@estadisticas.Total</td>
-            <td>@estadisticas.Series</td>
-            <td>@estadisticas.Peliculas</td>
-            <td>@estadisticas.Pendientes</td>
-        </tr>
-</table>
+    <!-- ESTADÍSTICAS -->
+    <div class="stats-grid">
 
+        <div class="stat-card">
+            <h3>Total</h3>
+            <span>@estadisticas.Total</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Series</h3>
+            <span>@estadisticas.Series</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Películas</h3>
+            <span>@estadisticas.Peliculas</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Pendientes</h3>
+            <span>@estadisticas.Pendientes</span>
+        </div>
+
+    </div>
+
+</div>

@@ -1,28 +1,84 @@
 ﻿@using LibreriaVirtual.Helpers;
 
-<div>
-    <h1>Nuevo contenido</h1>
-    <form enctype="multipart/form-data" asp-controller="Contenido" asp-action="Create" method="post">
-        <label>Titulo</label>
-        <input type="text" name="Titulo"/>
-        <label>Tipo</label>
-        <select name="tipo">
-            <option>-- Elige el tipo --</option>
-            @foreach (Tipos tipo in Tipos.GetValues(typeof(Tipos)))
-            {
-                <option>@tipo</option>
-            }
-        </select>
-        <label>Genero</label>
-        <select name="genero">
-            <option>-- Elige el genero --</option>
-            @foreach (Generos genero in Generos.GetValues(typeof(Generos)))
-            {
-                <option>@genero</option>
-            }
-        </select>
-        <label>Imagen</label>
-        <input type="file" name="fichero" />
-        <button>Crear</button>
-    </form>
+<div class="crear-container">
+
+    <div class="crear-hero">
+        <h1>Nuevo Contenido</h1>
+        <p>Añade una nueva serie o película a tu catálogo</p>
+    </div>
+
+    <div class="crear-card">
+
+        <form enctype="multipart/form-data"
+              asp-controller="Contenido"
+              asp-action="Create"
+              method="post">
+
+            <div class="crear-preview" id="previewContainer">
+                <img id="previewImg" />
+            </div>
+
+            <div class="input-group">
+                <label>Título</label>
+                <input type="text" name="Titulo" required />
+            </div>
+
+            <div class="input-group">
+                <label>Tipo</label>
+                <select name="tipo" required>
+                    <option disabled selected>-- Elige el tipo --</option>
+                    @foreach (Tipos tipo in Tipos.GetValues(typeof(Tipos)))
+                    {
+                        <option>@tipo</option>
+                    }
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Género</label>
+                <select name="genero" required>
+                    <option disabled selected>-- Elige el género --</option>
+                    @foreach (Generos genero in Generos.GetValues(typeof(Generos)))
+                    {
+                        <option>@genero</option>
+                    }
+                </select>
+            </div>
+
+            <div class="custom-file-input">
+                <input type="file" name="fichero" id="fileInput" accept="image/*" />
+                <button type="button" onclick="document.getElementById('fileInput').click()">
+                    Subir Imagen
+                </button>
+            </div>
+
+            <button type="submit" class="btn-crear">
+                Crear Contenido
+            </button>
+
+        </form>
+
+    </div>
+
 </div>
+
+<script>
+    const fileInput = document.getElementById("fileInput");
+    const previewImg = document.getElementById("previewImg");
+    const previewContainer = document.getElementById("previewContainer");
+
+    previewContainer.style.display = "none";
+
+    fileInput.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImg.src = e.target.result;
+                previewContainer.style.display = "flex";
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

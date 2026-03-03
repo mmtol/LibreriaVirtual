@@ -1,11 +1,59 @@
 ﻿@model Usuario
 
-<form enctype="multipart/form-data" asp-controller="Usuario" asp-action="Editar" method="post">
-    <label>Nombre</label>
-    <input type="text" name="nombre" value="@Model.Nombre"/>
-    <label>Imagen</label>
-    <input type="file" name="fichero"/>
-    <label>Email</label>
-    <input type="text" name="email" value="@Model.Email"/>
-    <button>Editar</button>
-</form>
+<div class="editar-container">
+
+    <div class="editar-card">
+
+        <h1>Editar Perfil</h1>
+
+        <form enctype="multipart/form-data"
+              asp-controller="Usuario"
+              asp-action="Editar"
+              method="post">
+
+            <div class="editar-img-preview">
+                <img id="previewImg" src="/@Model.Imagen" alt="preview" />
+            </div>
+
+            <div class="input-group">
+                <label>Nombre</label>
+                <input type="text" name="nombre" value="@Model.Nombre" required />
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input type="text" name="email" value="@Model.Email" required />
+            </div>
+
+            <div class="custom-file-input">
+                <input type="file" name="fichero" id="fileInput" accept="image/*" />
+                <button type="button" onclick="document.getElementById('fileInput').click()">
+                    Cambiar Imagen
+                </button>
+            </div>
+
+            <button type="submit" class="btn-guardar">
+                Guardar Cambios
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+    const fileInput = document.getElementById("fileInput");
+    const previewImg = document.getElementById("previewImg");
+
+    fileInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImg.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

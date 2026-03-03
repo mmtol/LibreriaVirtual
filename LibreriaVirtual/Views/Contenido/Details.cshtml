@@ -1,13 +1,36 @@
 ﻿@model Contenido
 
-<div>
-    <img src=@Model.Imagen style="width:50px"/>
-    <h1>@Model.Titulo</h1>
-    <h3>@Model.Tipo</h3>
-    <h3>@Model.Genero</h3>
-    @if (Model.Estado == "vista")
-    {
-        <h3>@Model.Puntuacion</h3>
-        <h3>@Model.Opinion</h3>
-    }
+<div class="detalle-container">
+
+    <div class="detalle-card">
+
+        <div class="detalle-img">
+            <img src="/@Model.Imagen" alt="@Model.Titulo" />
+        </div>
+
+        <div class="detalle-info">
+
+            <h1>@Model.Titulo</h1>
+
+            <div class="detalle-tags">
+                <span class="tag tipo">@Model.Tipo</span>
+                <span class="tag genero">@Model.Genero</span>
+            </div>
+
+            @if (Model.Estado == "Vista")
+            {
+                <div class="detalle-review">
+                    <div class="rating">
+                        ⭐ @Model.Puntuacion / 10
+                    </div>
+                    <div class="opinion">
+                        "@Model.Opinion"
+                    </div>
+                </div>
+            }
+
+        </div>
+
+    </div>
+
 </div>

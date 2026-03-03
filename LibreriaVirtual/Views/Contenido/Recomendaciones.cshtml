@@ -1,8 +1,40 @@
-﻿<h1>Recomendaciones</h1>
+﻿<div class="reco-container">
 
-<a asp-controller="Contenido" asp-action="Index" asp-route-accion="genero" asp-route-personal=@false>
-    Ver el catalogo segun tu genero más valorado
-</a>
-<a asp-controller="Contenido" asp-action="Index" asp-route-accion="puntuacion" asp-route-personal=@false>
-    Ver el catalogo segun los titulos mas valorados
-</a>
+    <div class="reco-hero">
+        <h1>Recomendaciones</h1>
+        <p>Descubre contenido adaptado a tus gustos y tendencias actuales</p>
+    </div>
+
+    <div class="reco-grid">
+
+        <!-- CARD 1 -->
+        <a asp-controller="Contenido"
+           asp-action="Index"
+           asp-route-accion="genero"
+           asp-route-personal="@false"
+           class="reco-card">
+
+            <div class="reco-icon">🎭</div>
+            <h2>Según tu género favorito</h2>
+            <p>Explora títulos basados en el género que más has valorado.</p>
+            <span class="reco-btn">Explorar</span>
+
+        </a>
+
+        <!-- CARD 2 -->
+        <a asp-controller="Contenido"
+           asp-action="Index"
+           asp-route-accion="puntuacion"
+           asp-route-personal="@false"
+           class="reco-card">
+
+            <div class="reco-icon">⭐</div>
+            <h2>Más valorados</h2>
+            <p>Descubre los contenidos con mejores puntuaciones globales.</p>
+            <span class="reco-btn">Ver ranking</span>
+
+        </a>
+
+    </div>
+
+</div>
