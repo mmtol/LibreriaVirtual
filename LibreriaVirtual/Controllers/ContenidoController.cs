@@ -2,7 +2,6 @@
 using LibreriaVirtual.Models;
 using LibreriaVirtual.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LibreriaVirtual.Controllers
 {
@@ -31,6 +30,18 @@ namespace LibreriaVirtual.Controllers
                 else if (accion == "puntuacion")
                 {
                     contenidos = await repo.GetRecomendacionesMejorValoradosAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                }
+                else if (accion == "aleatorio")
+                {
+                    List<Contenido> aux = await repo.GetCatalogoPublicoAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+
+                    if (aux != null && aux.Count > 0)
+                    {
+                        Random generador = new Random();
+                        int aleatorio = generador.Next(0, aux.Count);
+
+                        return RedirectToAction("Details", new { idcontenido = aux[aleatorio].IdContenido });
+                    }
                 }
             }
             else
@@ -93,7 +104,7 @@ namespace LibreriaVirtual.Controllers
             ViewData["personal"] = personal;
             List<Contenido> contenidos = new List<Contenido>();
             contenidos = await repo.FindContenidoTipoYGeneroAsync(tipo, genero, (int)HttpContext.Session.GetInt32("idUsuario"));
-            return View();
+            return View(contenidos);
         }
 
         [HttpPost]

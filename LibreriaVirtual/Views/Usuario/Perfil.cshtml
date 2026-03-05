@@ -1,6 +1,11 @@
 ﻿@model Usuario
 @{
     EstadisticasUsuario estadisticas = ViewData["estadisticas"] as EstadisticasUsuario;
+
+    int vistos = estadisticas.Total - estadisticas.Pendientes;
+    int total = estadisticas.Total;
+    double porcentaje = total > 0 ? ((double)vistos / total) * 100 : 0;
+    int restantes = estadisticas.Pendientes;
 }
 
 <div class="perfil-container">
@@ -44,6 +49,41 @@
             <span>@estadisticas.Pendientes</span>
         </div>
 
+        <!-- BARRA DE PROGRESO GRANDE -->
+        <div class="progress-card-full">
+            <h3>Progreso total de visionado</h3>
+            <div class="progress-wrapper-full">
+                <div class="progress-bar-full" style="width:0%">
+                    <span class="progress-text">@vistos de @total vistos</span>
+                </div>
+            </div>
+            <p class="progress-message">
+                @if (restantes == 0)
+                {
+                    <text>¡Has visto todo! 🎉</text>
+                }
+                else if (restantes <= 3)
+                {
+                    <text>¡Casi terminas! Solo @restantes quedan</text>
+                }
+                else
+                {
+                    <text>Quedan @restantes contenidos por ver</text>
+                }
+            </p>
+        </div>
+
     </div>
 
 </div>
+
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const bar = document.querySelector(".progress-bar-full");
+        const porcentaje = @porcentaje.ToString("F0");
+        bar.style.transition = "width 1.5s ease-in-out";
+        setTimeout(() => {
+            bar.style.width = porcentaje + "%";
+        }, 100);
+    });
+</script>

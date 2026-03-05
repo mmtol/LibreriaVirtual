@@ -57,75 +57,149 @@
 
     <div class="catalogo-grid">
 
-        @foreach (Contenido contenido in Model)
+        @if (Model != null)
         {
-            <div class="catalogo-card">
+            @foreach (Contenido contenido in Model)
+            {
+                <div class="catalogo-card">
 
-                <div class="card-img">
-                    <img src="/@contenido.Imagen" />
-                </div>
-
-                <div class="card-body">
-
-                    <h2>@contenido.Titulo</h2>
-
-                    <div class="card-tags">
-                        <span class="tag tipo">@contenido.Tipo</span>
-                        <span class="tag genero">@contenido.Genero</span>
+                    <div class="card-img">
+                        <img src="/@contenido.Imagen" />
                     </div>
 
-                    @if (personal && contenido.Estado == "Vista")
-                    {
-                        <div class="vista-badge">⭐ Vista</div>
-                    }
+                    <div class="card-body">
 
-                    <div class="card-actions">
+                        <h2>@contenido.Titulo</h2>
 
-                        <a asp-controller="Contenido"
-                           asp-action="Details"
-                           asp-route-idcontenido="@contenido.IdContenido">
-                            Detalles
-                        </a>
+                        <div class="card-tags">
+                            <span class="tag tipo">@contenido.Tipo</span>
+                            <span class="tag genero">@contenido.Genero</span>
+                        </div>
 
-                        @if (personal)
+                        @if (personal && contenido.Estado == "Vista")
                         {
-                            <a href="#" onclick="marcarVisto(@contenido.IdContenido)">
-                                Marcar como visto
-                            </a>
+                            <div class="vista-badge">⭐ Vista</div>
+                        }
+
+                        <div class="card-actions">
 
                             <a asp-controller="Contenido"
-                               asp-action="Delete"
+                               asp-action="Details"
                                asp-route-idcontenido="@contenido.IdContenido">
-                                Eliminar
+                                Detalles
                             </a>
 
-                            @if (contenido.Estado == "Vista")
+                            @if (personal)
                             {
-                                <a href="#" onclick="modificarOpinion(@contenido.IdContenido)">
-                                    Modificar puntuación
+                                <a href="#" onclick="marcarVisto(@contenido.IdContenido)">
+                                    Marcar como visto
+                                </a>
+
+                                <a asp-controller="Contenido"
+                                   asp-action="Delete"
+                                   asp-route-idcontenido="@contenido.IdContenido">
+                                    Eliminar
+                                </a>
+
+                                @if (contenido.Estado == "Vista")
+                                {
+                                    <a href="#" onclick="modificarOpinion(@contenido.IdContenido)">
+                                        Modificar puntuación
+                                    </a>
+                                }
+                            }
+                            else
+                            {
+                                <a asp-controller="Contenido"
+                                   asp-action="Apropiar"
+                                   asp-route-idcontenido="@contenido.IdContenido"
+                                   asp-route-titulo="@contenido.Titulo"
+                                   asp-route-tipo="@contenido.Tipo"
+                                   asp-route-genero="@contenido.Genero"
+                                   asp-route-imagen="@contenido.Imagen">
+                                    Añadir a mi catálogo
                                 </a>
                             }
-                        }
-                        else
-                        {
-                            <a asp-controller="Contenido"
-                               asp-action="Apropiar"
-                               asp-route-idcontenido="@contenido.IdContenido"
-                               asp-route-titulo="@contenido.Titulo"
-                               asp-route-tipo="@contenido.Tipo"
-                               asp-route-genero="@contenido.Genero"
-                               asp-route-imagen="@contenido.Imagen">
-                                Añadir a mi catálogo
-                            </a>
-                        }
+
+                        </div>
 
                     </div>
 
                 </div>
-
-            </div>
+            }
         }
 
     </div>
 
 </div>
+
+<script>
+
+    function marcarVisto(idContenido) {
+        Swal.fire({
+            title: 'Marcar como visto',
+            html:
+                '<input id="puntuacion" type="number" min="1" max="10" class="swal2-input" placeholder="Puntuación (1-10)">' +
+                '<textarea id="opinion" class="swal2-textarea" placeholder="Escribe tu opinión"></textarea>',
+            confirmButtonText: 'Guardar',
+            showCancelButton: true,
+            preConfirm: () => {
+
+                const puntuacion = document.getElementById('puntuacion').value;
+                const opinion = document.getElementById('opinion').value;
+
+                if (!puntuacion || puntuacion < 1 || puntuacion > 10) {
+                    Swal.showValidationMessage('Introduce una puntuación válida (1-10)');
+                }
+
+                return { puntuacion, opinion };
+            }
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                window.location.href =
+                    '/Contenido/Ver?idcontenido=' + idContenido +
+                    '&puntuacion=' + result.value.puntuacion +
+                    '&opinion=' + encodeURIComponent(result.value.opinion);
+            }
+
+        });
+    }
+
+
+    function modificarOpinion(idContenido) {
+
+        Swal.fire({
+            title: 'Modificar puntuación',
+            html:
+                '<input id="puntuacion" type="number" min="1" max="10" class="swal2-input" placeholder="Nueva puntuación">' +
+                '<textarea id="opinion" class="swal2-textarea" placeholder="Nueva opinión"></textarea>',
+            confirmButtonText: 'Actualizar',
+            showCancelButton: true,
+            preConfirm: () => {
+
+                const puntuacion = document.getElementById('puntuacion').value;
+                const opinion = document.getElementById('opinion').value;
+
+                if (!puntuacion || puntuacion < 1 || puntuacion > 10) {
+                    Swal.showValidationMessage('Introduce una puntuación válida (1-10)');
+                }
+
+                return { puntuacion, opinion };
+            }
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                window.location.href =
+                    '/Contenido/UpdateOpinion?idcontenido=' + idContenido +
+                    '&puntuacion=' + result.value.puntuacion +
+                    '&opinion=' + encodeURIComponent(result.value.opinion);
+            }
+
+        });
+
+    }
+
+</script>

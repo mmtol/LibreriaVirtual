@@ -15,15 +15,42 @@ namespace LibreriaVirtual.Repositories
             this.context = context;
         }
 
+        public async Task<int> GetMaxIdUsuariosAsync()
+        {
+            if (context.Usuarios.Count() == 0)
+            {
+                return 1;
+            }
+            else
+            {
+                return await context.Usuarios.MaxAsync(z => z.IdUsuario) + 1;
+            }
+        }
+
+        public async Task<int> GetMaxIdContenidosAsync()
+        {
+            if (context.Contenidos.Count() == 0)
+            {
+                return 1;
+            }
+            else
+            {
+                return await context.Contenidos.MaxAsync(z => z.IdContenido) + 1;
+            }
+        }
+
         public async Task<bool> RegistrarseAsync(string nombre, string imagen, string email, string pass)
         {
             //con el procedimiento verifica si ya existe el usuario y si no, se inserta
             //devuelve true si se ha creado correctamente y false si ya existe y no se ha creado
 
+            int idUsuario = await GetMaxIdUsuariosAsync();
+
             string salt = HelperTools.GenerarSalt();
             byte[] passHash = HelperCrytography.EncriptarPass(pass, salt);
 
-            string sql = "SP_REGISTRARSE @nombre, @imagen, @email, @pass, @salt, @registroExitoso output";
+            string sql = "SP_REGISTRARSE @idUsuario, @nombre, @imagen, @email, @pass, @salt, @registroExitoso output";
+            SqlParameter pamIdUsuario = new SqlParameter("@idUsuario", idUsuario);
             SqlParameter pamNombre = new SqlParameter("@nombre", nombre);
             SqlParameter pamImagen = new SqlParameter("@imagen", imagen);
             SqlParameter pamEmail = new SqlParameter("@email", email);
@@ -33,7 +60,7 @@ namespace LibreriaVirtual.Repositories
             SqlParameter pamExito = new SqlParameter("@registroExitoso", System.Data.SqlDbType.Bit);
             pamExito.Direction = System.Data.ParameterDirection.Output;
 
-            await context.Database.ExecuteSqlRawAsync(sql, pamNombre, pamImagen, pamEmail, pamPass, pamSalt, pamExito);
+            await context.Database.ExecuteSqlRawAsync(sql, pamIdUsuario, pamNombre, pamImagen, pamEmail, pamPass, pamSalt, pamExito);
 
             return (bool)pamExito.Value;
         }
@@ -105,55 +132,49 @@ namespace LibreriaVirtual.Repositories
             return usuario;
         }
 
-        public async Task<List<Contenido>> GetContenidosUsuarioAsync(int idUsuario)
-        {
-            //devuelve la lista de contenidos del usuario para el catalogo personal
-            var consulta = from datos in context.Contenidos
-                           where datos.IdUsuario == idUsuario
-                           select datos;
-            List<Contenido> contenidosUsuario = await consulta.ToListAsync();
-            return contenidosUsuario;
-        }
-
         public async Task<List<Contenido>> FindContenidoTipoYGeneroAsync(string tipo, string genero, int idUsuario)
         {
-            //si el tipo y/o el genero no son nulos, devuelven los contenidos que coincidan por ello
+            var titulosUsuario = from datos in context.Contenidos
+                                 where datos.IdUsuario == idUsuario
+                                 select datos.Titulo;
+
             var consulta = from datos in context.Contenidos
-                           where datos.IdUsuario != idUsuario
+                           where !titulosUsuario.Contains(datos.Titulo)
                            select datos;
 
-            List<Contenido> contenidos = await consulta.ToListAsync();
-
-            foreach (Contenido contenido in contenidos)
+            if (tipo != null && tipo != "-- Tipo --")
             {
-                if (tipo != null)
-                {
-                    if (contenido.Tipo != tipo)
-                    {
-                        contenidos.Remove(contenido);
-                    }
-                }
-                else if (genero != null)
-                {
-                    if (contenido.Genero != genero)
-                    {
-                        contenidos.Remove(contenido);
-                    }
-                }
+                consulta = from datos in consulta
+                           where datos.Tipo == tipo
+                           select datos;
             }
 
-            return contenidos;
+            if (genero != null && genero != "-- Género --")
+            {
+                consulta = from datos in consulta
+                           where datos.Genero == genero
+                           select datos;
+            }
+
+            List<Contenido> resultados = await consulta.ToListAsync();
+            return resultados;
         }
 
         public async Task<List<Contenido>> GetCatalogoPublicoAsync(int idUsuario)
         {
-            //devuelve el catalogo publico exceptuando los del usuario
+            //primero saco los titulos que ya tiene el usuario
+            var titulosUsuario = from datos in context.Contenidos
+                                 where datos.IdUsuario == idUsuario
+                                 select datos.Titulo;
+
+            //y los saco de todos los contenidos para que me muestre los del resto
             var consulta = from datos in context.Contenidos
-                           where datos.IdUsuario != idUsuario
+                           where !titulosUsuario.Contains(datos.Titulo)
                            group datos by datos.Titulo into grupo
                            select grupo.First();
 
             List<Contenido> catalogoPublico = await consulta.ToListAsync();
+
             return catalogoPublico;
         }
 
@@ -172,7 +193,10 @@ namespace LibreriaVirtual.Repositories
             //con el procedimiento inserta un contenido pendiente en el catalogo personal del usuario
             //al crearlo, lo devuelve para seguir editandolo
 
-            string sql = "SP_INSERT_CONTENIDO @idUsuario, @titulo, @tipo, @genero, @imagen";
+            int idContenido = await GetMaxIdContenidosAsync();
+
+            string sql = "SP_INSERT_CONTENIDO @idContenido, @idUsuario, @titulo, @tipo, @genero, @imagen";
+            SqlParameter pamIdContenido = new SqlParameter("@idContenido", idContenido);
             SqlParameter pamIdUsuario = new SqlParameter("@idUsuario", idUsuario);
             SqlParameter pamTitulo = new SqlParameter("@titulo", titulo);
             SqlParameter pamTipo = new SqlParameter("@tipo", tipo);
@@ -180,7 +204,7 @@ namespace LibreriaVirtual.Repositories
             SqlParameter pamImagen = new SqlParameter("@imagen", imagen);
 
             Contenido contenido = context.Contenidos
-                                .FromSqlRaw(sql, pamIdUsuario, pamTitulo, pamTipo, pamGenero, pamImagen)
+                                .FromSqlRaw(sql, pamIdContenido, pamIdUsuario, pamTitulo, pamTipo, pamGenero, pamImagen)
                                 .AsEnumerable()
                                 .FirstOrDefault();
             return contenido;

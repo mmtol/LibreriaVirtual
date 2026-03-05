@@ -13,7 +13,6 @@ namespace LibreriaVirtual.Repositories
         Task<EstadisticasUsuario> GetEstadisticasUsuarioAsync(int idUsuario);
 
         // CONTENIDO PERSONAL
-        Task<List<Contenido>> GetContenidosUsuarioAsync(int idUsuario);
         Task<List<Contenido>> GetCatalogoPersonalAsync(int idUsuario);
         Task<Contenido> InsertContenidoAsync(int idUsuario, string titulo, string tipo, string genero, string imagen);
         Task VerContenidoAsync(int idContenido, int puntuacion, string opinion);

@@ -2,6 +2,12 @@
 
 <div class="detalle-container">
 
+    <div class="volver-wrapper">
+        <a asp-controller="Contenido" asp-action="Index" asp-route-personal=@true class="btn-volver">
+            ← Volver al Catálogo
+        </a>
+    </div>
+
     <div class="detalle-card">
 
         <div class="detalle-img">
@@ -17,7 +23,7 @@
                 <span class="tag genero">@Model.Genero</span>
             </div>
 
-            @if (Model.Estado == "Vista")
+            @if (Model.Estado == "Vista" && Context.Session.GetInt32("idUsuario") == Model.IdUsuario)
             {
                 <div class="detalle-review">
                     <div class="rating">

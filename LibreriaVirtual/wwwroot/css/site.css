@@ -70,6 +70,106 @@ body.layout-page {
         object-fit: cover;
     }
 
+/* Estilo grid de estadisticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+}
+
+/* Barra grande que ocupa las 4 columnas */
+.progress-card-full {
+    grid-column: 1 / 5; /* ocupa las 4 columnas */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: #f4f7fa;
+    padding: 25px;
+    border-radius: 25px;
+    box-shadow: 0 15px 40px rgba(77,166,255,0.2);
+    margin-top: 20px;
+}
+
+.progress-wrapper-full {
+    width: 100%;
+    background: #e2e8f0;
+    border-radius: 25px;
+    overflow: hidden;
+    height: 40px; /* más grande */
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.progress-bar-full {
+    height: 100%;
+    background: linear-gradient(135deg, #4da6ff, #2563eb);
+    width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    border-radius: 25px 0 0 25px;
+}
+
+.progress-text {
+    font-size: 16px;
+    padding: 0 15px;
+}
+
+.progress-message {
+    font-size: 16px;
+    color: #2563eb;
+    font-weight: 600;
+    animation: fadeIn 1s ease;
+}
+
+/* Responsive: pantallas pequeñas */
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+    }
+
+    .progress-card-full {
+        grid-column: 1 / 3; /* ocupa 2 columnas */
+    }
+}
+
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: 1fr; /* 1 columna */
+    }
+
+    .progress-card-full {
+        grid-column: 1 / 2; /* ocupa toda la fila */
+    }
+
+    .progress-wrapper-full {
+        height: 35px; /* ajustar altura para móvil */
+    }
+
+    .progress-text {
+        font-size: 14px; /* texto más pequeño en móvil */
+    }
+
+    .progress-message {
+        font-size: 14px;
+    }
+}
+
+/* fade in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* ===== CONTENIDO ===== */
 .contenido {
     padding: 30px;
@@ -466,9 +566,11 @@ button {
 
 /* ===== EDITAR PERFIL ===== */
 
+/* ===== EDITAR PERFIL ===== */
+
 .editar-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* para que los elementos se apilen verticalmente */
     align-items: center;
     padding: 60px 20px;
 }
@@ -480,6 +582,7 @@ button {
     border-radius: 25px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.15);
     transition: 0.3s;
+    margin-top: 15px; /* separa la card del botón */
 }
 
     .editar-card:hover {
@@ -491,6 +594,28 @@ button {
         text-align: center;
         margin-bottom: 30px;
         color: #1f3c5d;
+    }
+
+/* BOTÓN VOLVER */
+.volver-wrapper {
+    align-self: flex-start; /* lo pone al inicio horizontalmente */
+    margin-bottom: 20px;
+}
+
+.btn-volver {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #4da6ff, #2563eb);
+    color: white;
+    font-weight: 600;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+    .btn-volver:hover {
+        background: linear-gradient(135deg, #2563eb, #1f3c5d);
+        transform: translateY(-2px);
     }
 
 /* IMAGEN PREVIEW */
@@ -714,7 +839,9 @@ button {
 .detalle-container {
     padding: 60px;
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* apila elementos verticalmente */
+    align-items: center; /* centra horizontalmente */
+    gap: 20px; /* espacio entre botón y card */
 }
 
 .detalle-card {
@@ -819,6 +946,30 @@ button {
         transform: translateY(0);
     }
 }
+
+/* ===== DETALLE CONTAINER CORREGIDO ===== */
+
+/* BOTÓN VOLVER */
+.volver-wrapper {
+    align-self: flex-start; /* lo pone al inicio horizontalmente */
+    margin-bottom: 10px;
+}
+
+.btn-volver {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #4da6ff, #2563eb);
+    color: white;
+    font-weight: 600;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+    .btn-volver:hover {
+        background: linear-gradient(135deg, #2563eb, #1f3c5d);
+        transform: translateY(-2px);
+    }
 
 /* ===== CATALOGO ===== */
 
