@@ -1,6 +1,7 @@
 ﻿@model Usuario
 @{
     EstadisticasUsuario estadisticas = ViewData["estadisticas"] as EstadisticasUsuario;
+    List<Contenido> favoritos = ViewData["favoritos"] as List<Contenido>;
 
     int vistos = estadisticas.Total - estadisticas.Pendientes;
     int total = estadisticas.Total;
@@ -72,6 +73,39 @@
                 }
             </p>
         </div>
+
+        @if (favoritos != null && favoritos.Count > 0)
+{
+    <div class="favoritos-section">
+
+        <h2 class="favoritos-title">⭐ Tus contenidos favoritos</h2>
+
+        <div class="favoritos-grid">
+
+            @foreach (var fav in favoritos)
+            {
+                <a asp-controller="Contenido"
+                   asp-action="Details"
+                   asp-route-idcontenido="@fav.IdContenido"
+                   class="favorito-card">
+
+                    <div class="favorito-img">
+                        <img src="/@fav.Imagen" alt="@fav.Titulo" />
+                        <div class="favorito-star">⭐</div>
+                    </div>
+
+                    <div class="favorito-info">
+                        <h3>@fav.Titulo</h3>
+                        <span>@fav.Tipo</span>
+                    </div>
+
+                </a>
+            }
+
+        </div>
+
+    </div>
+}
 
     </div>
 

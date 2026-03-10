@@ -16,9 +16,10 @@ namespace LibreriaVirtual.Controllers
             this.helper = helper;
         }
 
-        public async Task<IActionResult> Index(bool personal, string accion)
+        public async Task<IActionResult> Index(bool personal, string accion, bool? favs)
         {
             ViewData["personal"] = personal;
+            ViewData["favs"] = favs;
 
             List<Contenido> contenidos = new List<Contenido>();
             if (accion != null)
@@ -96,6 +97,21 @@ namespace LibreriaVirtual.Controllers
         {
             await repo.ApropiarContenidoAsync(idcontenido, (int)HttpContext.Session.GetInt32("idUsuario"), titulo, tipo, genero, imagen);
             return RedirectToAction("Index", new { personal = false });
+        }
+
+        public async Task<IActionResult> MarcarFav(int idcontenido)
+        {
+            Contenido contenido = await repo.FindContenidoAsync(idcontenido);
+            if (contenido.Favorito)
+            {
+                await repo.UpdateFavoritoContenido(idcontenido, false);
+            }
+            else
+            {
+                await repo.UpdateFavoritoContenido(idcontenido, true);
+            }
+
+            return RedirectToAction("Index", new { personal = true, favs = true });
         }
 
         [HttpPost]

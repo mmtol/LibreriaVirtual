@@ -2,7 +2,6 @@
 using LibreriaVirtual.Models;
 using LibreriaVirtual.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LibreriaVirtual.Controllers
 {
@@ -22,6 +21,9 @@ namespace LibreriaVirtual.Controllers
             EstadisticasUsuario estadisticas = await repo.GetEstadisticasUsuarioAsync((int)HttpContext.Session.GetInt32("idUsuario"));
             ViewData["estadisticas"] = estadisticas;
 
+            List<Contenido> favs = await repo.GetContenidosFavoritosAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+            ViewData["favs"] = favs;
+
             Usuario usuario = await repo.FindUsuarioIdAsync((int)HttpContext.Session.GetInt32("idUsuario"));
             return View(usuario);
         }
@@ -33,11 +35,16 @@ namespace LibreriaVirtual.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Editar(string nombre, IFormFile fichero, string email)
+        public async Task<IActionResult> Editar(string nombre, IFormFile fichero, string email, string pass)
         {
             string imagen = await ComprobarImagenAsync(fichero);
 
             await repo.UpdateUsuarioAsync((int)HttpContext.Session.GetInt32("idUsuario"), nombre, imagen, email);
+
+            if (pass != null)
+            {
+                await repo.UpdatePassAsync((int)HttpContext.Session.GetInt32("idUsuario"), pass);
+            }
 
             return RedirectToAction("Perfil");
         }

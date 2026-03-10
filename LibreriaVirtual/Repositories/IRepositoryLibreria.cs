@@ -8,6 +8,7 @@ namespace LibreriaVirtual.Repositories
         Task<bool> RegistrarseAsync(string nombre, string imagen, string email, string pass);
         Task<Usuario> LoginAsync(string email, string pass);
         Task UpdateUsuarioAsync(int idUsuario, string nombre, string imagen, string email);
+        Task UpdatePassAsync(int idUsuario, string pass);
         Task<Usuario> FindUsuarioEmailAsync(string email);
         Task<Usuario> FindUsuarioIdAsync(int idUsuario);
         Task<EstadisticasUsuario> GetEstadisticasUsuarioAsync(int idUsuario);
@@ -20,6 +21,8 @@ namespace LibreriaVirtual.Repositories
         Task<Contenido> FindContenidoAsync(int idContenido);
         Task UpdateOpinionAsync(int idContenido, int idUsuario, int puntuacion, string opinion);
         Task DeleteContenidoAsync(int idContenido, int idUsuario);
+        Task UpdateFavoritoContenido(int idContenido, bool esFav);
+        Task<List<Contenido>> GetContenidosFavoritosAsync(int idUsuario);
 
         // CONTENIDO PUBLICO / BUSQUEDAS
         Task<List<Contenido>> GetCatalogoPublicoAsync(int idUsuario);

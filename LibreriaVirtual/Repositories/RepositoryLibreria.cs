@@ -112,6 +112,16 @@ namespace LibreriaVirtual.Repositories
             await context.SaveChangesAsync();
         }
 
+        public async Task UpdatePassAsync(int idUsuario, string pass)
+        {
+            //hay que actualizar la contraseña del usuario
+            Usuario usuario = await FindUsuarioIdAsync(idUsuario);
+            string salt = await FindSaltAsync(idUsuario);
+            byte[] passHash = HelperCrytography.EncriptarPass(pass, salt);
+            usuario.Pass = passHash;
+            await context.SaveChangesAsync();
+        }
+
         public async Task<Usuario> FindUsuarioEmailAsync(string email)
         {
             //devuelve el usuario por su idUsuario
@@ -301,6 +311,24 @@ namespace LibreriaVirtual.Repositories
                            select datos;
             EstadisticasUsuario estadisticas = await consulta.FirstOrDefaultAsync();
             return estadisticas;
+        }
+
+        public async Task UpdateFavoritoContenido(int idContenido, bool esFav)
+        {
+            //Actualiza el Contenido y lo marca como favorito
+            Contenido contenido = await FindContenidoAsync(idContenido);
+            contenido.Favorito = esFav;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<List<Contenido>> GetContenidosFavoritosAsync(int idUsuario)
+        {
+            //devuelve una lista de los contenidos favoritos del usuario
+            var consulta = from datos in context.Contenidos
+                           where datos.IdUsuario == idUsuario && datos.Favorito == true
+                           select datos;
+            List<Contenido> favoritos = await consulta.ToListAsync();
+            return favoritos;
         }
     }
 }

@@ -2,9 +2,20 @@
 
 <div class="home-hero">
     <div class="home-carousel">
-        @foreach (var ruta in Model)
+        @for (int i = 0; i < Model.Count; i++)
         {
-            <img src="@ruta" alt="Contenido" />
+            <img src="@Model[i]" alt="Contenido" data-index="@i" />
         }
     </div>
 </div>
+
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const imgs = document.querySelectorAll(".home-carousel img");
+        const delay = 4; // segundos entre cada imagen
+
+        imgs.forEach((img, i) => {
+            img.style.animationDelay = `${i * delay}s`;
+        });
+    });
+</script>
