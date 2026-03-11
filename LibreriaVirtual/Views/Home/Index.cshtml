@@ -1,21 +1,25 @@
-﻿@model List<string>
+﻿@{
+    var idUsuario = Context.Session.GetInt32("idUsuario");
+    var imgUsuario = Context.Session.GetString("imgUsuario");
+}
 
 <div class="home-hero">
-    <div class="home-carousel">
-        @for (int i = 0; i < Model.Count; i++)
+
+    <h1 class="home-title">Bienvenido a tu Librería Virtual</h1>
+    <p class="home-subtitle">Gestiona y descubre tus contenidos de forma sencilla y divertida</p>
+
+    <div class="home-buttons">
+        <a asp-controller="Contenido" asp-action="Index" asp-route-personal="true" class="btn-hero">Mi Catálogo Personal</a>
+        <a asp-controller="Contenido" asp-action="Index" asp-route-personal="false" class="btn-hero">Catálogo Público</a>
+        <a asp-controller="Contenido" asp-action="Index" asp-route-personal="true" asp-route-favs="true" class="btn-hero">Mis Favoritos</a>
+        <a asp-controller="Contenido" asp-action="Recomendaciones" class="btn-hero">Recomendaciones</a>
+    </div>
+
+    <div class="bubbles">
+        @for (int i = 0; i < 15; i++)
         {
-            <img src="@Model[i]" alt="Contenido" data-index="@i" />
+            <div class="bubble" style="--i:@i"></div>
         }
     </div>
+
 </div>
-
-<script>
-    window.addEventListener("DOMContentLoaded", () => {
-        const imgs = document.querySelectorAll(".home-carousel img");
-        const delay = 4; // segundos entre cada imagen
-
-        imgs.forEach((img, i) => {
-            img.style.animationDelay = `${i * delay}s`;
-        });
-    });
-</script>

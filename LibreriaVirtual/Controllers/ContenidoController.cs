@@ -93,13 +93,13 @@ namespace LibreriaVirtual.Controllers
             return RedirectToAction("Index", new { personal = true });
         }
 
-        public async Task<IActionResult> Apropiar(int idcontenido, string titulo, string tipo, string genero, string imagen)
+        public async Task<IActionResult> Apropiar(string titulo, string tipo, string genero, string imagen)
         {
-            await repo.ApropiarContenidoAsync(idcontenido, (int)HttpContext.Session.GetInt32("idUsuario"), titulo, tipo, genero, imagen);
+            await repo.ApropiarContenidoAsync((int)HttpContext.Session.GetInt32("idUsuario"), titulo, tipo, genero, imagen);
             return RedirectToAction("Index", new { personal = false });
         }
 
-        public async Task<IActionResult> MarcarFav(int idcontenido)
+        public async Task<IActionResult> MarcarFav(int idcontenido, bool? favs)
         {
             Contenido contenido = await repo.FindContenidoAsync(idcontenido);
             if (contenido.Favorito)
@@ -111,7 +111,7 @@ namespace LibreriaVirtual.Controllers
                 await repo.UpdateFavoritoContenido(idcontenido, true);
             }
 
-            return RedirectToAction("Index", new { personal = true, favs = true });
+            return RedirectToAction("Index", new { personal = true, favs = favs });
         }
 
         [HttpPost]

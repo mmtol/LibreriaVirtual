@@ -10,15 +10,20 @@
 <div class="catalogo-container">
 
     <div class="catalogo-hero">
-        @if (personal)
+        @if (personal && !soloFavs)
         {
             <h1>Mi Catálogo Personal</h1>
             <p>Gestiona tus contenidos guardados y valoraciones</p>
         }
-        else
+        else if (!personal)
         {
             <h1>Catálogo Público</h1>
             <p>Explora todo el contenido disponible</p>
+        }
+        else if (soloFavs)
+        {
+            <h1>Mis Favoritos</h1>
+            <p>Recuerda tus contenidos favoritos para volver a verlos</p>
         }
     </div>
 
@@ -108,9 +113,7 @@
                                         Marcar como visto
                                     </a>
 
-                                    <a asp-controller="Contenido"
-                                       asp-action="Delete"
-                                       asp-route-idcontenido="@contenido.IdContenido">
+                                    <a href="#" onclick="confirmarEliminar(@contenido.IdContenido)">
                                         Eliminar
                                     </a>
 
@@ -123,6 +126,7 @@
                                         <a asp-controller="Contenido"
                                            asp-action="MarcarFav"
                                            asp-route-idcontenido="@contenido.IdContenido"
+                                           asp-route-favs=@ViewData["favs"]
                                            class="fav-btn">
                                             @(contenido.Favorito == true ? "⭐" : "☆")
                                         </a>
@@ -132,7 +136,6 @@
                                 {
                                     <a asp-controller="Contenido"
                                        asp-action="Apropiar"
-                                       asp-route-idcontenido="@contenido.IdContenido"
                                        asp-route-titulo="@contenido.Titulo"
                                        asp-route-tipo="@contenido.Tipo"
                                        asp-route-genero="@contenido.Genero"
@@ -171,3 +174,149 @@
     </div>
 
 </div>
+
+<script>
+
+    function marcarVisto(idContenido) {
+
+        Swal.fire({
+            title: 'Marcar como visto',
+            html:
+                '<div class="swal-form">' +
+                    '<input id="puntuacion" type="number" min="1" max="10" step="1" placeholder="Puntuación (1-10)">' +
+                    '<textarea id="opinion" placeholder="Escribe tu opinión"></textarea>' +
+                '</div>',
+            confirmButtonText: 'Guardar',
+            cancelButtonText: 'Cancelar',
+            showCancelButton: true,
+            focusConfirm: false,
+
+            preConfirm: () => {
+
+                const puntuacionInput = document.getElementById('puntuacion');
+                const opinionInput = document.getElementById('opinion');
+
+                const puntuacion = puntuacionInput.value.trim();
+                const opinion = opinionInput.value.trim();
+
+                if (puntuacion === "" || opinion === "") {
+                    Swal.showValidationMessage("Debes rellenar puntuación y opinión");
+                    return false;
+                }
+
+                if (!/^[0-9]+$/.test(puntuacion)) {
+                    Swal.showValidationMessage("La puntuación debe ser un número entero");
+                    return false;
+                }
+
+                const puntuacionNum = parseInt(puntuacion);
+
+                if (puntuacionNum < 1 || puntuacionNum > 10) {
+                    Swal.showValidationMessage("La puntuación debe estar entre 1 y 10");
+                    return false;
+                }
+
+                return {
+                    puntuacion: puntuacionNum,
+                    opinion: opinion
+                };
+            }
+
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                window.location.href =
+                    '/Contenido/Ver?idcontenido=' + idContenido +
+                    '&puntuacion=' + result.value.puntuacion +
+                    '&opinion=' + encodeURIComponent(result.value.opinion);
+            }
+
+        });
+
+    }
+
+
+
+    function modificarOpinion(idContenido) {
+
+        Swal.fire({
+            title: 'Modificar puntuación',
+            html:
+                '<div class="swal-form">' +
+                    '<input id="puntuacion" type="number" min="1" max="10" step="1" placeholder="Nueva puntuación">' +
+                    '<textarea id="opinion" placeholder="Nueva opinión"></textarea>' +
+                '</div>',
+            confirmButtonText: 'Actualizar',
+            cancelButtonText: 'Cancelar',
+            showCancelButton: true,
+            focusConfirm: false,
+
+            preConfirm: () => {
+
+                const puntuacionInput = document.getElementById('puntuacion');
+                const opinionInput = document.getElementById('opinion');
+
+                const puntuacion = puntuacionInput.value.trim();
+                const opinion = opinionInput.value.trim();
+
+                if (puntuacion === "" || opinion === "") {
+                    Swal.showValidationMessage("Debes rellenar puntuación y opinión");
+                    return false;
+                }
+
+                if (!/^[0-9]+$/.test(puntuacion)) {
+                    Swal.showValidationMessage("La puntuación debe ser un número entero");
+                    return false;
+                }
+
+                const puntuacionNum = parseInt(puntuacion);
+
+                if (puntuacionNum < 1 || puntuacionNum > 10) {
+                    Swal.showValidationMessage("La puntuación debe estar entre 1 y 10");
+                    return false;
+                }
+
+                return {
+                    puntuacion: puntuacionNum,
+                    opinion: opinion
+                };
+            }
+
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                window.location.href =
+                    '/Contenido/UpdateOpinion?idcontenido=' + idContenido +
+                    '&puntuacion=' + result.value.puntuacion +
+                    '&opinion=' + encodeURIComponent(result.value.opinion);
+            }
+
+        });
+
+    }
+
+        function confirmarEliminar(idContenido) {
+
+        Swal.fire({
+            title: '¿Eliminar contenido?',
+            text: 'Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#4da6ff',
+            cancelButtonColor: '#aaa',
+            reverseButtons: true
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                window.location.href = '/Contenido/Delete?idcontenido=' + idContenido;
+            }
+
+        });
+
+    }
+
+</script>

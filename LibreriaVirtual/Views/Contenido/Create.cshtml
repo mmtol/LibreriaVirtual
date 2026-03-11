@@ -15,7 +15,8 @@
 
     <div class="crear-card">
 
-        <form enctype="multipart/form-data"
+        <form id="formCrear"
+              enctype="multipart/form-data"
               asp-controller="Contenido"
               asp-action="Create"
               method="post">
@@ -69,9 +70,11 @@
 </div>
 
 <script>
+
     const fileInput = document.getElementById("fileInput");
     const previewImg = document.getElementById("previewImg");
     const previewContainer = document.getElementById("previewContainer");
+    const form = document.getElementById("formCrear");
 
     previewContainer.style.display = "none";
 
@@ -87,4 +90,28 @@
             reader.readAsDataURL(file);
         }
     });
+
+    // VALIDACIÓN FORMULARIO
+    form.addEventListener("submit", function (e) {
+
+        const titulo = document.querySelector("input[name='Titulo']").value.trim();
+        const tipo = document.querySelector("select[name='tipo']").value;
+        const genero = document.querySelector("select[name='genero']").value;
+        const imagen = fileInput.files.length;
+
+        if (!titulo || !tipo || !genero || imagen === 0) {
+
+            e.preventDefault();
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos incompletos',
+                text: 'Debes rellenar todos los campos antes de crear el contenido',
+                confirmButtonColor: '#4da6ff'
+            });
+
+        }
+
+    });
+
 </script>

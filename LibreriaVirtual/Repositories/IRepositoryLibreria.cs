@@ -17,7 +17,7 @@ namespace LibreriaVirtual.Repositories
         Task<List<Contenido>> GetCatalogoPersonalAsync(int idUsuario);
         Task<Contenido> InsertContenidoAsync(int idUsuario, string titulo, string tipo, string genero, string imagen);
         Task VerContenidoAsync(int idContenido, int puntuacion, string opinion);
-        Task ApropiarContenidoAsync(int idContenido, int idUsuario, string titulo, string tipo, string genero, string imagen);
+        Task ApropiarContenidoAsync(int idUsuario, string titulo, string tipo, string genero, string imagen);
         Task<Contenido> FindContenidoAsync(int idContenido);
         Task UpdateOpinionAsync(int idContenido, int idUsuario, int puntuacion, string opinion);
         Task DeleteContenidoAsync(int idContenido, int idUsuario);

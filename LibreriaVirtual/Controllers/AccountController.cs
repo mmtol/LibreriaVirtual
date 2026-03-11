@@ -29,8 +29,15 @@ namespace LibreriaVirtual.Controllers
         [HttpPost]
         public async Task<IActionResult> Registro(string nombre, IFormFile fichero, string email, string pass)
         {
-            //diferenciar las fotos por el id en el proc de la bbdd, quitar el autoincremental
-            string imagen = await SubirFileAsync(fichero);
+            string imagen;
+            if (fichero == null)
+            {
+                imagen = "images/users/default.jpg";
+            }
+            else
+            {
+                imagen = await SubirFileAsync(fichero);
+            }
 
             string resultado;
             bool correcto = await repo.RegistrarseAsync(nombre, imagen, email, pass);

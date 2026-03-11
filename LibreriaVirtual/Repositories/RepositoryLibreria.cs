@@ -231,18 +231,22 @@ namespace LibreriaVirtual.Repositories
             await context.Database.ExecuteSqlRawAsync(sql, pamIdContenido, pamPuntuacion, pamOpinion);
         }
 
-        public async Task ApropiarContenidoAsync(int idContenido, int idUsuario, string titulo, string tipo, string genero, string imagen)
+        public async Task ApropiarContenidoAsync(int idUsuario, string titulo, string tipo, string genero, string imagen)
         {
             //con el procedimiento, al escoger un contenido del catalogo publico, se mete al catalogo personal del usuario, con el estado pendiente
-            string sql = "SP_APROPIAR_CONTENIDO @idContenido, @idUsuario, @titulo, @tipo, @genero, @imagen";
+
+            int idContenido = await GetMaxIdContenidosAsync();
+
+            string sql = "SP_APROPIAR_CONTENIDO @idContenido, @idUsuario, @titulo, @tipo, @genero, @imagen, @fav";
             SqlParameter pamIdContenido = new SqlParameter("@idContenido", idContenido);
             SqlParameter pamIdUsuario = new SqlParameter("@idUsuario", idUsuario);
             SqlParameter pamTitulo = new SqlParameter("@titulo", titulo);
             SqlParameter pamTipo = new SqlParameter("@tipo", tipo);
             SqlParameter pamGenero = new SqlParameter("@genero", genero);
             SqlParameter pamImagen = new SqlParameter("@imagen", imagen);
+            SqlParameter pamFav = new SqlParameter("@fav", false);
 
-            await context.Database.ExecuteSqlRawAsync(sql, pamIdContenido, pamIdUsuario, pamTitulo, pamTipo, pamGenero, pamImagen);
+            await context.Database.ExecuteSqlRawAsync(sql, pamIdContenido, pamIdUsuario, pamTitulo, pamTipo, pamGenero, pamImagen, pamFav);
         }
 
         public async Task<Contenido> FindContenidoAsync(int idContenido)
