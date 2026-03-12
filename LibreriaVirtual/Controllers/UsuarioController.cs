@@ -18,35 +18,62 @@ namespace LibreriaVirtual.Controllers
 
         public async Task<IActionResult> Perfil()
         {
-            EstadisticasUsuario estadisticas = await repo.GetEstadisticasUsuarioAsync((int)HttpContext.Session.GetInt32("idUsuario"));
-            ViewData["estadisticas"] = estadisticas;
+            int? idUsuario = HttpContext.Session.GetInt32("idUsuario");
 
-            List<Contenido> favs = await repo.GetContenidosFavoritosAsync((int)HttpContext.Session.GetInt32("idUsuario"));
-            ViewData["favs"] = favs;
+            if (idUsuario != null)
+            {
+                EstadisticasUsuario estadisticas = await repo.GetEstadisticasUsuarioAsync((int)idUsuario);
+                ViewData["estadisticas"] = estadisticas;
 
-            Usuario usuario = await repo.FindUsuarioIdAsync((int)HttpContext.Session.GetInt32("idUsuario"));
-            return View(usuario);
+                List<Contenido> favs = await repo.GetContenidosFavoritosAsync((int)idUsuario);
+                ViewData["favs"] = favs;
+
+                Usuario usuario = await repo.FindUsuarioIdAsync((int)idUsuario);
+                return View(usuario);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
         }
 
         public async Task<IActionResult> Editar()
         {
-            Usuario usuario = await repo.FindUsuarioIdAsync((int)HttpContext.Session.GetInt32("idUsuario"));
-            return View(usuario);
+            int? idUsuario = HttpContext.Session.GetInt32("idUsuario");
+
+            if (idUsuario != null)
+            {
+                Usuario usuario = await repo.FindUsuarioIdAsync((int)idUsuario);
+                return View(usuario);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Editar(string nombre, IFormFile fichero, string email, string pass)
         {
-            string imagen = await ComprobarImagenAsync(fichero);
+            int? idUsuario = HttpContext.Session.GetInt32("idUsuario");
 
-            await repo.UpdateUsuarioAsync((int)HttpContext.Session.GetInt32("idUsuario"), nombre, imagen, email);
-
-            if (pass != null)
+            if (idUsuario != null)
             {
-                await repo.UpdatePassAsync((int)HttpContext.Session.GetInt32("idUsuario"), pass);
-            }
+                string imagen = await ComprobarImagenAsync(fichero);
 
-            return RedirectToAction("Perfil");
+                await repo.UpdateUsuarioAsync((int)HttpContext.Session.GetInt32("idUsuario"), nombre, imagen, email);
+
+                if (pass != null)
+                {
+                    await repo.UpdatePassAsync((int)HttpContext.Session.GetInt32("idUsuario"), pass);
+                }
+
+                return RedirectToAction("Perfil");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
         }
 
         private async Task<string> ComprobarImagenAsync(IFormFile fichero)
