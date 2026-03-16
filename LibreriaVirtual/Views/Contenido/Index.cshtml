@@ -98,13 +98,13 @@
                                        asp-route-favs=@ViewData["favs"]
                                        asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
                                        class="fav-btn">
-                                        @if(contenido.Favorito)
+                                        @if (contenido.Favorito)
                                         {
-                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star" style="color:#FFD700; text-shadow: 0 0 2px #b8860b;"></i>
                                         }
                                         else
                                         {
-                                            <i class="fa-thin fa-star"></i>
+                                            <i class="fa-regular fa-star" style="color:#FFD700; text-shadow: 0 0 2px #b8860b;"></i>
                                         }
                                         </a>
                                 }
