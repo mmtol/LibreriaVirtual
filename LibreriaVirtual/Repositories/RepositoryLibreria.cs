@@ -91,10 +91,14 @@ namespace LibreriaVirtual.Repositories
                 string salt = await FindSaltAsync(encontrado.IdUsuario);
                 byte[] passHash = HelperCrytography.EncriptarPass(pass, salt);
 
-                string sql = "SP_LOGIN_USUARIO @pass";
+                string sql = "SP_LOGIN_USUARIO @email, @pass";
+                SqlParameter pamEmail = new SqlParameter("@email", email);
                 SqlParameter pamPass = new SqlParameter("@pass", passHash);
 
-                Usuario usuario = context.Usuarios.FromSqlRaw(sql, pamPass).AsEnumerable().FirstOrDefault();
+                Usuario usuario = context.Usuarios
+                    .FromSqlRaw(sql, pamEmail, pamPass)
+                    .AsEnumerable()
+                    .FirstOrDefault();
 
                 return usuario;
             }

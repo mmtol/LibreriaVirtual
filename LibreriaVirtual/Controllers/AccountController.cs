@@ -107,12 +107,12 @@ namespace LibreriaVirtual.Controllers
 
                 if (TempData["personal"] != null)
                 {
-                    routeValues["personal"] = TempData["personal"].ToString();
+                    routeValues["personal"] = TempData["personal"]!.ToString();
                 }
 
                 if (TempData["favs"] != null)
                 {
-                    routeValues["favs"] = TempData["favs"].ToString();
+                    routeValues["favs"] = TempData["favs"]!.ToString();
                 }
 
                 if (routeValues.Count > 0)
