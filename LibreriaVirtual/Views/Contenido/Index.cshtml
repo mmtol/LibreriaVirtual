@@ -103,16 +103,15 @@
 
                                 <a asp-controller="Contenido"
                                    asp-action="Details"
-                                   asp-route-idcontenido="@contenido.IdContenido">
+                                   asp-route-idcontenido="@contenido.IdContenido"
+                                   asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
+                                   asp-route-favs="@soloFavs"
+                                   asp-route-personal="@personal">
                                     Detalles
                                 </a>
 
                                 @if (personal)
                                 {
-                                    <a href="#" onclick="marcarVisto(@contenido.IdContenido)">
-                                        Marcar como visto
-                                    </a>
-
                                     <a href="#" onclick="confirmarEliminar(@contenido.IdContenido)">
                                         Eliminar
                                     </a>
@@ -130,6 +129,12 @@
                                            asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
                                            class="fav-btn">
                                             @(contenido.Favorito == true ? "⭐" : "☆")
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" onclick="marcarVisto(@contenido.IdContenido)">
+                                            Marcar como visto
                                         </a>
                                     }
                                 }
@@ -231,7 +236,8 @@
                 window.location.href =
                     '/Contenido/Ver?idcontenido=' + idContenido +
                     '&puntuacion=' + result.value.puntuacion +
-                    '&opinion=' + encodeURIComponent(result.value.opinion);
+                    '&opinion=' + encodeURIComponent(result.value.opinion) +
+                    '&id=' + @Context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             }
 
         });
@@ -292,7 +298,8 @@
                 window.location.href =
                     '/Contenido/UpdateOpinion?idcontenido=' + idContenido +
                     '&puntuacion=' + result.value.puntuacion +
-                    '&opinion=' + encodeURIComponent(result.value.opinion);
+                    '&opinion=' + encodeURIComponent(result.value.opinion) +
+                    '&id=' + @Context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             }
 
         });
@@ -314,7 +321,8 @@
         }).then((result) => {
 
             if (result.isConfirmed) {
-                window.location.href = '/Contenido/Delete?idcontenido=' + idContenido;
+                window.location.href = '/Contenido/Delete?idcontenido=' + idContenido +
+                    '&id=' + @Context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             }
 
         });

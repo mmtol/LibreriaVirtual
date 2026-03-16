@@ -98,14 +98,11 @@ namespace LibreriaVirtual.Controllers
                     userPrincipal
                 );
 
-                string controller = TempData["controller"]?.ToString();
-                string action = TempData["action"]?.ToString();
-
                 var routeValues = new RouteValueDictionary();
 
                 if (TempData["id"] != null)
                 {
-                    routeValues["id"] = TempData["id"].ToString();
+                    routeValues["id"] = idUsuario.ToString();
                 }
 
                 if (TempData["personal"] != null)
@@ -120,11 +117,11 @@ namespace LibreriaVirtual.Controllers
 
                 if (routeValues.Count > 0)
                 {
-                    return RedirectToAction(action, controller, routeValues);
+                    return RedirectToAction("Index", "Home", routeValues);
                 }
                 else
                 {
-                    return RedirectToAction(action, controller);
+                    return RedirectToAction("Index", "Home");
                 }
             }
             else

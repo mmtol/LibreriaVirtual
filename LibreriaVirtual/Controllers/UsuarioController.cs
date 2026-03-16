@@ -90,8 +90,6 @@ namespace LibreriaVirtual.Controllers
 
         private async Task RefrescarClaimsUsuario(Usuario usuario)
         {
-            await HttpContext.SignOutAsync();
-
             ClaimsIdentity identity = new ClaimsIdentity(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 ClaimTypes.Name,

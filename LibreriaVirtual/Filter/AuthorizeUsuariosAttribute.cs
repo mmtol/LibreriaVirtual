@@ -11,17 +11,12 @@ namespace LibreriaVirtual.Filter
         {
             var user = context.HttpContext.User;
 
-            string controller = context.RouteData.Values["controller"].ToString();
-            string action = context.RouteData.Values["action"].ToString();
-
             var id = context.RouteData.Values["id"];
+            var personal = context.RouteData.Values["personal"];
+            var favs = context.RouteData.Values["favs"];
 
             ITempDataProvider provider = context.HttpContext.RequestServices.GetService<ITempDataProvider>();
-
             var temp = provider.LoadTempData(context.HttpContext);
-
-            temp["controller"] = controller;
-            temp["action"] = action;
 
             if (id != null)
             {
@@ -30,6 +25,24 @@ namespace LibreriaVirtual.Filter
             else
             {
                 temp.Remove("id");
+            }
+
+            if (personal != null)
+            {
+                temp["personal"] = personal.ToString();
+            }
+            else
+            {
+                temp.Remove("personal");
+            }
+
+            if (favs != null)
+            {
+                temp["favs"] = favs.ToString();
+            }
+            else
+            {
+                temp.Remove("favs");
             }
 
             provider.SaveTempData(context.HttpContext, temp);

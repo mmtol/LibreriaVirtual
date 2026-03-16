@@ -11,12 +11,28 @@
 
         <div class="sidebar">
             <div class="menu">
-            <a asp-controller="Usuario" asp-action="Perfil" asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value>Perfil</a>
-            <a asp-controller="Contenido" asp-action="Index" asp-route-personal=@true asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value>Catalogo Personal</a>
-            <a asp-controller="Contenido" asp-action="Index" asp-route-personal=@false asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value>Catalogo Publico</a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Usuario" asp-action="Perfil"
+                    asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value">Perfil</a>
+
+                <a asp-controller="Contenido" asp-action="Index"
+                    asp-route-personal="true"
+                    asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value">Catalogo Personal</a>
+
+                <a asp-controller="Contenido" asp-action="Index"
+                    asp-route-personal="false"
+                    asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value">Catalogo Publico</a>
+
                 <a asp-controller="Contenido" asp-action="Recomendaciones">Recomendaciones</a>
-            <a asp-controller="Contenido" asp-action="Index" asp-route-personal=@true asp-route-favs=@true asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value>Tus Favoritos</a>
+
+                <a asp-controller="Contenido" asp-action="Index"
+                    asp-route-personal="true"
+                    asp-route-favs="true"
+                    asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value">Tus Favoritos</a>
+
                 <a asp-controller="Account" asp-action="Logout">Cerrar Sesión</a>
+            }
             </div>
         </div>
 
@@ -26,7 +42,10 @@
             <a class="titulo" asp-controller="Home" asp-action="Index">LIBRERÍA VIRTUAL</a>
 
                 <div class="perfil-burbuja">
-                <img src="/@Context.User.FindFirst("Imagen").Value" />
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <img src="/@User.FindFirst("Imagen")?.Value" />
+                }
                 </div>
             </div>
 

@@ -69,8 +69,11 @@ namespace LibreriaVirtual.Controllers
         }
 
         [AuthorizeUsuariosAttribute]
-        public async Task<IActionResult> Details(int idcontenido)
+        public async Task<IActionResult> Details(int idcontenido, bool personal, bool favs)
         {
+            ViewData["personal"] = personal;
+            ViewData["favs"] = favs;
+
             Contenido contenido = await repo.FindContenidoAsync(idcontenido);
             return View(contenido);
         }
