@@ -1237,10 +1237,12 @@ button {
 }
 
 .tag {
-    padding: 5px 12px;
+    padding: 5px 10px;
     border-radius: 15px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: inline-block;
 }
 
 .tipo {

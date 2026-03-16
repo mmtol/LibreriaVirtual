@@ -87,17 +87,39 @@
 
                         <div class="card-body">
 
-                            <h2>@contenido.Titulo</h2>
+                            <h2>
+                                @contenido.Titulo
+
+                                @if (contenido.Estado == "Vista")
+                                {
+                                    <a asp-controller="Contenido"
+                                       asp-action="MarcarFav"
+                                       asp-route-idcontenido="@contenido.IdContenido"
+                                       asp-route-favs=@ViewData["favs"]
+                                       asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
+                                       class="fav-btn">
+                                        @if(contenido.Favorito)
+                                        {
+                                            <i class="fa-solid fa-star"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa-thin fa-star"></i>
+                                        }
+                                        </a>
+                                }
+                            </h2>
+
 
                             <div class="card-tags">
                                 <span class="tag tipo">@contenido.Tipo</span>
                                 <span class="tag genero">@contenido.Genero</span>
+                                @if (personal && contenido.Estado == "Vista")
+                                {
+                                    <div class="vista-badge">✅ Vista</div>
+                                }
                             </div>
 
-                            @if (personal && contenido.Estado == "Vista")
-                            {
-                                <div class="vista-badge">✅ Vista</div>
-                            }
 
                             <div class="card-actions">
 
@@ -120,15 +142,6 @@
                                     {
                                         <a href="#" onclick="modificarOpinion(@contenido.IdContenido)">
                                             Modificar puntuación
-                                        </a>
-
-                                        <a asp-controller="Contenido"
-                                           asp-action="MarcarFav"
-                                           asp-route-idcontenido="@contenido.IdContenido"
-                                           asp-route-favs=@ViewData["favs"]
-                                           asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
-                                           class="fav-btn">
-                                            @(contenido.Favorito == true ? "⭐" : "☆")
                                         </a>
                                     }
                                     else
