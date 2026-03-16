@@ -3,7 +3,7 @@
 <div class="crear-container">
 
     <div class="volver-wrapper">
-        <a asp-controller="Contenido" asp-action="Index" asp-route-personal=@true class="btn-volver">
+        <a asp-controller="Contenido" asp-action="Index" asp-route-personal=@true asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value class="btn-volver">
             ← Volver al Catálogo
         </a>
     </div>
@@ -19,6 +19,7 @@
               enctype="multipart/form-data"
               asp-controller="Contenido"
               asp-action="Create"
+              asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
               method="post">
 
             <div class="crear-preview" id="previewContainer">

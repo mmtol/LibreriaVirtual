@@ -21,7 +21,7 @@
             <h1>@Model.Nombre</h1>
             <p>@Model.Email</p>
 
-            <a asp-action="Editar" asp-controller="Usuario" class="btn-editar">
+            <a asp-action="Editar" asp-controller="Usuario" asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value class="btn-editar">
                 Editar Perfil
             </a>
         </div>

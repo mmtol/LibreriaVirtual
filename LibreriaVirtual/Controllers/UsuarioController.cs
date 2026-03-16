@@ -1,7 +1,11 @@
-﻿using LibreriaVirtual.Helpers;
+﻿using LibreriaVirtual.Filter;
+using LibreriaVirtual.Helpers;
 using LibreriaVirtual.Models;
 using LibreriaVirtual.Repositories;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LibreriaVirtual.Controllers
 {
@@ -16,78 +20,55 @@ namespace LibreriaVirtual.Controllers
             this.helper = helper;
         }
 
-        public async Task<IActionResult> Perfil()
+        [AuthorizeUsuariosAttribute]
+        public async Task<IActionResult> Perfil(string id)
         {
-            int? idUsuario = HttpContext.Session.GetInt32("idUsuario");
+            EstadisticasUsuario estadisticas = await repo.GetEstadisticasUsuarioAsync(int.Parse(id));
+            ViewData["estadisticas"] = estadisticas;
 
-            if (idUsuario != null)
-            {
-                EstadisticasUsuario estadisticas = await repo.GetEstadisticasUsuarioAsync((int)idUsuario);
-                ViewData["estadisticas"] = estadisticas;
+            List<Contenido> favs = await repo.GetContenidosFavoritosAsync(int.Parse(id));
+            ViewData["favs"] = favs;
 
-                List<Contenido> favs = await repo.GetContenidosFavoritosAsync((int)idUsuario);
-                ViewData["favs"] = favs;
-
-                Usuario usuario = await repo.FindUsuarioIdAsync((int)idUsuario);
-                return View(usuario);
-            }
-            else
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            Usuario usuario = await repo.FindUsuarioIdAsync(int.Parse(id));
+            return View(usuario);
         }
 
-        public async Task<IActionResult> Editar()
+        [AuthorizeUsuariosAttribute]
+        public async Task<IActionResult> Editar(string id)
         {
-            int? idUsuario = HttpContext.Session.GetInt32("idUsuario");
-
-            if (idUsuario != null)
-            {
-                Usuario usuario = await repo.FindUsuarioIdAsync((int)idUsuario);
-                return View(usuario);
-            }
-            else
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            Usuario usuario = await repo.FindUsuarioIdAsync(int.Parse(id));
+            return View(usuario);
         }
 
+        [AuthorizeUsuariosAttribute]
         [HttpPost]
-        public async Task<IActionResult> Editar(string nombre, IFormFile fichero, string email, string pass)
+        public async Task<IActionResult> Editar(string nombre, IFormFile fichero, string email, string pass, string id)
         {
-            int? idUsuario = HttpContext.Session.GetInt32("idUsuario");
+            string imagen = await ComprobarImagenAsync(fichero, id);
 
-            if (idUsuario != null)
+            await repo.UpdateUsuarioAsync(int.Parse(id), nombre, imagen, email);
+
+            if (pass != null)
             {
-                string imagen = await ComprobarImagenAsync(fichero);
-
-                await repo.UpdateUsuarioAsync((int)HttpContext.Session.GetInt32("idUsuario"), nombre, imagen, email);
-
-                if (pass != null)
-                {
-                    await repo.UpdatePassAsync((int)HttpContext.Session.GetInt32("idUsuario"), pass);
-                }
-
-                return RedirectToAction("Perfil");
+                await repo.UpdatePassAsync(int.Parse(id), pass);
             }
-            else
-            {
-                return RedirectToAction("Login", "Account");
-            }
+
+            Usuario usuario = await repo.FindUsuarioIdAsync(int.Parse(id));
+            await RefrescarClaimsUsuario(usuario);
+
+            return RedirectToAction("Perfil", new { id = id });
         }
 
-        private async Task<string> ComprobarImagenAsync(IFormFile fichero)
+        private async Task<string> ComprobarImagenAsync(IFormFile fichero, string id)
         {
             string imagen;
             if (fichero != null && fichero.Length > 0)
             {
                 imagen = await SubirFileAsync(fichero);
-                HttpContext.Session.Remove("imgUsuario");
-                HttpContext.Session.SetString("imgUsuario", imagen);
             }
             else
             {
-                Usuario usuario = await repo.FindUsuarioIdAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                Usuario usuario = await repo.FindUsuarioIdAsync(int.Parse(id));
                 imagen = usuario.Imagen;
             }
             return imagen;
@@ -105,6 +86,28 @@ namespace LibreriaVirtual.Controllers
             }
 
             return url;
+        }
+
+        private async Task RefrescarClaimsUsuario(Usuario usuario)
+        {
+            await HttpContext.SignOutAsync();
+
+            ClaimsIdentity identity = new ClaimsIdentity(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                ClaimTypes.Name,
+                ClaimTypes.Role
+            );
+
+            identity.AddClaim(new Claim(ClaimTypes.Name, usuario.Nombre));
+            identity.AddClaim(new Claim("Imagen", usuario.Imagen));
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.IdUsuario.ToString()));
+
+            ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal
+            );
         }
     }
 }

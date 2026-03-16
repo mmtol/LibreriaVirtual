@@ -1,7 +1,10 @@
 ﻿using LibreriaVirtual.Helpers;
 using LibreriaVirtual.Models;
 using LibreriaVirtual.Repositories;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LibreriaVirtual.Controllers
 {
@@ -75,9 +78,54 @@ namespace LibreriaVirtual.Controllers
 
             if (usuario != null)
             {
-                HttpContext.Session.SetInt32("idUsuario", usuario.IdUsuario);
-                HttpContext.Session.SetString("imgUsuario", usuario.Imagen);
-                return RedirectToAction("Index", "Home");
+                ClaimsIdentity identity = new ClaimsIdentity(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    ClaimTypes.Name, ClaimTypes.Role
+                );
+
+                string nombre = usuario.Nombre;
+                string imagen = usuario.Imagen;
+                int idUsuario = usuario.IdUsuario;
+
+                identity.AddClaim(new Claim(ClaimTypes.Name, nombre));
+                identity.AddClaim(new Claim("Imagen", imagen));
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, idUsuario.ToString()));
+
+                ClaimsPrincipal userPrincipal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    userPrincipal
+                );
+
+                string controller = TempData["controller"]?.ToString();
+                string action = TempData["action"]?.ToString();
+
+                var routeValues = new RouteValueDictionary();
+
+                if (TempData["id"] != null)
+                {
+                    routeValues["id"] = TempData["id"].ToString();
+                }
+
+                if (TempData["personal"] != null)
+                {
+                    routeValues["personal"] = TempData["personal"].ToString();
+                }
+
+                if (TempData["favs"] != null)
+                {
+                    routeValues["favs"] = TempData["favs"].ToString();
+                }
+
+                if (routeValues.Count > 0)
+                {
+                    return RedirectToAction(action, controller, routeValues);
+                }
+                else
+                {
+                    return RedirectToAction(action, controller);
+                }
             }
             else
             {
@@ -86,10 +134,10 @@ namespace LibreriaVirtual.Controllers
             }
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Remove("idUsuario");
-            HttpContext.Session.Remove("imgUsuario");
+            await HttpContext.SignOutAsync
+                (CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
     }

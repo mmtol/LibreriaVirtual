@@ -1,4 +1,5 @@
-﻿using LibreriaVirtual.Helpers;
+﻿using LibreriaVirtual.Filter;
+using LibreriaVirtual.Helpers;
 using LibreriaVirtual.Models;
 using LibreriaVirtual.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,8 @@ namespace LibreriaVirtual.Controllers
             this.helper = helper;
         }
 
-        public async Task<IActionResult> Index(bool personal, string accion, bool? favs)
+        [AuthorizeUsuariosAttribute]
+        public async Task<IActionResult> Index(bool personal, string accion, bool? favs, string id)
         {
             ViewData["personal"] = personal;
             ViewData["favs"] = favs;
@@ -26,15 +28,15 @@ namespace LibreriaVirtual.Controllers
             {
                 if (accion == "genero")
                 {
-                    contenidos = await repo.GetRecomendacionesGenerosMasValoradosAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                    contenidos = await repo.GetRecomendacionesGenerosMasValoradosAsync(int.Parse(id));
                 }
                 else if (accion == "puntuacion")
                 {
-                    contenidos = await repo.GetRecomendacionesMejorValoradosAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                    contenidos = await repo.GetRecomendacionesMejorValoradosAsync(int.Parse(id));
                 }
                 else if (accion == "aleatorio")
                 {
-                    List<Contenido> aux = await repo.GetCatalogoPublicoAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                    List<Contenido> aux = await repo.GetCatalogoPublicoAsync(int.Parse(id));
 
                     if (aux != null && aux.Count > 0)
                     {
@@ -49,57 +51,66 @@ namespace LibreriaVirtual.Controllers
             {
                 if (personal)
                 {
-                    contenidos = await repo.GetCatalogoPersonalAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                    contenidos = await repo.GetCatalogoPersonalAsync(int.Parse(id));
                 }
                 else
                 {
-                    contenidos = await repo.GetCatalogoPublicoAsync((int)HttpContext.Session.GetInt32("idUsuario"));
+                    contenidos = await repo.GetCatalogoPublicoAsync(int.Parse(id));
                 }
             }
 
             return View(contenidos);
         }
 
+        [AuthorizeUsuariosAttribute]
         public async Task<IActionResult> Create()
         {
             return View();
         }
 
+        [AuthorizeUsuariosAttribute]
         public async Task<IActionResult> Details(int idcontenido)
         {
             Contenido contenido = await repo.FindContenidoAsync(idcontenido);
             return View(contenido);
         }
 
-        public IActionResult Recomendaciones(string accion)
+        [AuthorizeUsuariosAttribute]
+        public IActionResult Recomendaciones()
         {
             return View();
         }
-        public async Task<IActionResult> Ver(int idcontenido, int puntuacion, string opinion)
+
+        [AuthorizeUsuariosAttribute]
+        public async Task<IActionResult> Ver(int idcontenido, int puntuacion, string opinion, string id)
         {
             await repo.VerContenidoAsync(idcontenido, puntuacion, opinion);
-            return RedirectToAction("Index", new { personal = true });
+            return RedirectToAction("Index", new { personal = true, id = id });
         }
 
-        public async Task<IActionResult> Delete(int idcontenido)
+        [AuthorizeUsuariosAttribute]
+        public async Task<IActionResult> Delete(int idcontenido, string id)
         {
-            await repo.DeleteContenidoAsync(idcontenido, (int)HttpContext.Session.GetInt32("idUsuario"));
-            return RedirectToAction("Index", new { personal = true });
+            await repo.DeleteContenidoAsync(idcontenido, int.Parse(id));
+            return RedirectToAction("Index", new { personal = true, id = id });
         }
 
-        public async Task<IActionResult> UpdateOpinion(int idcontenido, int puntuacion, string opinion)
+        [AuthorizeUsuariosAttribute]
+        public async Task<IActionResult> UpdateOpinion(int idcontenido, int puntuacion, string opinion, string id)
         {
-            await repo.UpdateOpinionAsync(idcontenido, (int)HttpContext.Session.GetInt32("idUsuario"), puntuacion, opinion);
-            return RedirectToAction("Index", new { personal = true });
+            await repo.UpdateOpinionAsync(idcontenido, int.Parse(id), puntuacion, opinion);
+            return RedirectToAction("Index", new { personal = true, id = id });
         }
 
-        public async Task<IActionResult> Apropiar(string titulo, string tipo, string genero, string imagen)
+        [AuthorizeUsuariosAttribute]
+        public async Task<IActionResult> Apropiar(string titulo, string tipo, string genero, string imagen, string id)
         {
-            await repo.ApropiarContenidoAsync((int)HttpContext.Session.GetInt32("idUsuario"), titulo, tipo, genero, imagen);
-            return RedirectToAction("Index", new { personal = false });
+            await repo.ApropiarContenidoAsync(int.Parse(id), titulo, tipo, genero, imagen);
+            return RedirectToAction("Index", new { personal = false, id = id });
         }
 
-        public async Task<IActionResult> MarcarFav(int idcontenido, bool? favs)
+        [AuthorizeUsuariosAttribute]
+        public async Task<IActionResult> MarcarFav(int idcontenido, bool? favs, string id)
         {
             Contenido contenido = await repo.FindContenidoAsync(idcontenido);
             if (contenido.Favorito)
@@ -111,30 +122,32 @@ namespace LibreriaVirtual.Controllers
                 await repo.UpdateFavoritoContenido(idcontenido, true);
             }
 
-            return RedirectToAction("Index", new { personal = true, favs = favs });
+            return RedirectToAction("Index", new { personal = true, favs = favs, id = id });
         }
 
+        [AuthorizeUsuariosAttribute]
         [HttpPost]
-        public async Task<IActionResult> Index(string tipo, string genero, bool personal)
+        public async Task<IActionResult> Index(string tipo, string genero, bool personal, string id)
         {
             ViewData["personal"] = personal;
             List<Contenido> contenidos = new List<Contenido>();
-            contenidos = await repo.FindContenidoTipoYGeneroAsync(tipo, genero, (int)HttpContext.Session.GetInt32("idUsuario"));
+            contenidos = await repo.FindContenidoTipoYGeneroAsync(tipo, genero, int.Parse(id));
             return View(contenidos);
         }
 
+        [AuthorizeUsuariosAttribute]
         [HttpPost]
-        public async Task<IActionResult> Create(string titulo, string tipo, string genero, IFormFile fichero)
+        public async Task<IActionResult> Create(string titulo, string tipo, string genero, IFormFile fichero, string id)
         {
-            string imagen = await SubirFileAsync(fichero);
+            string imagen = await SubirFileAsync(fichero, id);
 
-            await repo.InsertContenidoAsync((int)HttpContext.Session.GetInt32("idUsuario"), titulo, tipo, genero, imagen);
-            return RedirectToAction("Index", new { personal = true });
+            await repo.InsertContenidoAsync(int.Parse(id), titulo, tipo, genero, imagen);
+            return RedirectToAction("Index", new { personal = true, id = id });
         }
 
-        private async Task<string> SubirFileAsync(IFormFile fichero)
+        private async Task<string> SubirFileAsync(IFormFile fichero, string id)
         {
-            string file = (int)HttpContext.Session.GetInt32("idUsuario") + "_" + fichero.FileName;
+            string file = int.Parse(id) + "_" + fichero.FileName;
             string ruta = helper.MapPath(file, Carpetas.Contenidos);
             string url = helper.MapUrlPath(file, Carpetas.Contenidos);
 

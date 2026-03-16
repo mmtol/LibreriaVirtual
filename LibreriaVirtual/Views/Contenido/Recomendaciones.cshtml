@@ -12,6 +12,7 @@
            asp-action="Index"
            asp-route-accion="genero"
            asp-route-personal="@false"
+           asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
            class="reco-card">
 
             <div class="reco-icon">🎭</div>
@@ -26,6 +27,7 @@
            asp-action="Index"
            asp-route-accion="puntuacion"
            asp-route-personal="@false"
+           asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
            class="reco-card">
 
             <div class="reco-icon">⭐</div>
@@ -39,6 +41,7 @@
            asp-action="Index"
            asp-route-accion="aleatorio"
            asp-route-personal="@false"
+           asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
            class="reco-card">
 
             <div class="reco-icon">🎲</div>

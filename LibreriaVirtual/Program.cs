@@ -1,11 +1,25 @@
 using LibreriaVirtual.Data;
 using LibreriaVirtual.Helpers;
 using LibreriaVirtual.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+builder.Services.AddAuthentication
+    (
+        options =>
+        {
+            options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        }
+    ).AddCookie();
+
+builder.Services.AddControllersWithViews
+    (options => options.EnableEndpointRouting = false).AddSessionStateTempDataProvider();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
@@ -17,14 +31,18 @@ builder.Services.AddDbContext<LibreriaVirtualContext>(options => options.UseSqlS
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseSession();
 
-app.MapControllerRoute
-    (
+app.UseMvc(routes =>
+{
+    routes.MapRoute(
         name: "default",
-        pattern: "{controller=Account}/{action=Login}"
-    );
+        template: "{controller=Home}/{action=Index}/{id?}");
+});
 
 app.Run();

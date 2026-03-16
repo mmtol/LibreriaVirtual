@@ -56,7 +56,7 @@
     else if (personal && !soloFavs)
     {
         <div class="nuevo-wrapper">
-            <a asp-controller="Contenido" asp-action="Create" class="btn-nuevo">
+            <a asp-controller="Contenido" asp-action="Create" asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value class="btn-nuevo">
                 + Nuevo Contenido
             </a>
         </div>
@@ -127,6 +127,7 @@
                                            asp-action="MarcarFav"
                                            asp-route-idcontenido="@contenido.IdContenido"
                                            asp-route-favs=@ViewData["favs"]
+                                           asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
                                            class="fav-btn">
                                             @(contenido.Favorito == true ? "⭐" : "☆")
                                         </a>
@@ -139,7 +140,8 @@
                                        asp-route-titulo="@contenido.Titulo"
                                        asp-route-tipo="@contenido.Tipo"
                                        asp-route-genero="@contenido.Genero"
-                                       asp-route-imagen="@contenido.Imagen">
+                                       asp-route-imagen="@contenido.Imagen"
+                                       asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value>
                                         Añadir a mi catálogo
                                     </a>
                                 }

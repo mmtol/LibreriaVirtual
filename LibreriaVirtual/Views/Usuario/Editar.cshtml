@@ -3,7 +3,7 @@
 <div class="editar-container">
 
     <div class="volver-wrapper">
-        <a asp-controller="Usuario" asp-action="Perfil" class="btn-volver">
+        <a asp-controller="Usuario" asp-action="Perfil" asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value class="btn-volver">
             ← Volver al Perfil
         </a>
     </div>
@@ -14,7 +14,8 @@
 
         <form enctype="multipart/form-data"
               asp-controller="Usuario"
-              asp-action="Editar"
+              asp-action="Editar" 
+              asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value
               method="post">
 
             <div class="editar-img-preview">

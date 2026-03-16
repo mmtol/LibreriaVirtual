@@ -1,17 +1,12 @@
-﻿@{
-    var idUsuario = Context.Session.GetInt32("idUsuario");
-    var imgUsuario = Context.Session.GetString("imgUsuario");
-}
-
-<div class="home-hero">
+﻿<div class="home-hero">
 
     <h1 class="home-title">Bienvenido a tu Librería Virtual</h1>
     <p class="home-subtitle">Gestiona y descubre tus contenidos de forma sencilla y divertida</p>
 
     <div class="home-buttons">
-        <a asp-controller="Contenido" asp-action="Index" asp-route-personal="true" class="btn-hero">Mi Catálogo Personal</a>
-        <a asp-controller="Contenido" asp-action="Index" asp-route-personal="false" class="btn-hero">Catálogo Público</a>
-        <a asp-controller="Contenido" asp-action="Index" asp-route-personal="true" asp-route-favs="true" class="btn-hero">Mis Favoritos</a>
+        <a asp-controller="Contenido" asp-action="Index" asp-route-personal="true" asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value class="btn-hero">Mi Catálogo Personal</a>
+        <a asp-controller="Contenido" asp-action="Index" asp-route-personal="false" asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value class="btn-hero">Catálogo Público</a>
+        <a asp-controller="Contenido" asp-action="Index" asp-route-personal="true" asp-route-favs="true" asp-route-id=@Context.User.FindFirst(ClaimTypes.NameIdentifier).Value class="btn-hero">Mis Favoritos</a>
         <a asp-controller="Contenido" asp-action="Recomendaciones" class="btn-hero">Recomendaciones</a>
     </div>
 
