@@ -90,7 +90,7 @@
                             <h2>
                                 @contenido.Titulo
 
-                                @if (contenido.Estado == "Vista")
+                                @if (contenido.Estado == "Vista" && @Context.User.FindFirst(ClaimTypes.NameIdentifier).Value == contenido.IdUsuario.ToString())
                                 {
                                     <a asp-controller="Contenido"
                                        asp-action="MarcarFav"
